@@ -23,7 +23,11 @@ Supabase projesi `ooyjctgdfkexjybiqjti` kurulu: şema + seed yüklü, anonymous 
 
 Çalıştırılana kadar: kod hazır ama veri yok. `/akis` "henüz açık değil" mesajı gösterir ve header'daki Akış linki gizlidir (`SiteHeader.tsx`'te yorum satırı — SQL çalışınca geri ekle). Rotada etkinlik rozeti çıkmaz; rota normal çizilir, demo etkilenmez.
 
-**Kalan iş: QR kodlarını yazdır.** `/admin/qr` sayfasını canlı domainden aç ve yazdır — QR değerleri `window.location.origin` ile üretilir, yerelden yazdırılan kodlar `localhost` gösterir.
+**Kalan iş (hepsi operasyon, kod değil — ayrıntısı `HANDOFF.md`'de):**
+
+1. **QR kodlarını yazdır.** `/admin/qr` sayfasını **canlı domainden** aç ve yazdır — QR değerleri `window.location.origin` ile üretilir; yerelden yazdırılan kodlar `localhost`, Vercel preview dalından yazdırılanlar ise dal silinince ölen bir adres gösterir.
+2. **`supabase/roadmap.sql`'i çalıştır** (Dashboard → SQL Editor). Dosya ASCII ve idempotent, yapıştırmak güvenli. Sonra `SiteHeader.tsx`'teki Akış linkini geri ekle.
+3. **Canlıda bir kez dene:** `/giris` kayıt→çıkış→giriş akışı ve `/oduller` kupon alma. İkisi de hiç test edilmedi.
 
 ## Mimari kuralları
 
@@ -40,7 +44,7 @@ Supabase projesi `ooyjctgdfkexjybiqjti` kurulu: şema + seed yüklü, anonymous 
 
 - **Türkçe karakterler Supabase SQL editörüne panodan yapıştırılırsa bozulur** (Chrome→Monaco encoding; "Müzesi" → "M√ºzesi"). Elle yapıştıracaksan önce ASCII'ye çevir: her non-ASCII karakteri `'||chr(<kod>)||'` ile değiştir. `psql` veya Supabase CLI kullanırsan sorun yok.
 - `.env.local` git'te yok. Yoksa `cp .env.local.example .env.local` ve Dashboard → Connect'ten doldur.
-- **Supabase'de e-posta doğrulaması açıksa** kayıt sonrası oturum gelmez; kullanıcı posta kutusuna erişemediği demoda giriş yapamaz. Dashboard → Authentication → Sign In / Providers → Email → "Confirm email" kapalı olmalı. Kod iki durumu da yönetir: doğrulama gerekiyorsa ekranda bilgilendirme çıkar.
+- **Supabase'de e-posta doğrulaması açıksa** kayıt sonrası oturum gelmez; kullanıcı posta kutusuna erişemediği demoda giriş yapamaz. Dashboard → Authentication → Sign In / Providers → Email → "Confirm email" kapalı olmalı — **11 Ekim'de kapatıldı**, ama `/giris` akışı canlıda hâlâ denenmedi. Kod iki durumu da yönetir: doğrulama gerekiyorsa ekranda bilgilendirme çıkar.
 - Leaflet SSR'da patlar; harita bileşeni `dynamic(..., { ssr: false })` ile yüklenmeli.
 - `NEXT_PUBLIC_DEMO_SKIP_GEOFENCE=true` iken check-in konum kontrolünü atlar ve ekranda "demo modu" etiketi gösterir. Jüri salonunda mekana 300 m yakın olunamayacağı için demoda açık kalmalı; etiketi gizleme, jüriye açıkça söyle.
 

@@ -15,6 +15,22 @@ Bursa/Osmangazi rotası alır, mekandaki QR'ı okutup puan ve rozet kazanır, pu
 alır. Uygulama canlıda çalışıyor; kalan iş demoyu sahneye hazırlamak ve son yazılan
 özellikleri açmak.
 
+## Nerede Kaldık (özet)
+
+| Aşama | Durum |
+|------|-------|
+| Çekirdek demo akışı (sihirbaz → rota → QR → puan → kupon) | ✅ yazıldı, canlıda doğrulandı (kupon alma hariç) |
+| Vercel deploy + `main`'e push ile otomatik yayın | ✅ çalışıyor |
+| TR/EN dil anahtarı | ✅ canlıda çalışıyor, veritabanı gerektirmiyor |
+| Kayıt / giriş (`/giris`) | ⚠️ kod hazır, "Confirm email" kapatıldı, **canlı test bekliyor** |
+| Fotoğraf akışı + etkinlik takvimi | ⛔ kod hazır, `roadmap.sql` çalıştırılmadı → kapalı |
+| QR kodlarının basılı hali | ⛔ canlı domainden yazdırılmadı |
+| Bağımlılık açığı (Dependabot) | ✅ incelendi, demoyu etkilemiyor, bilinçli bırakıldı |
+
+Kısaca: **demonun kendisi ayakta ve canlıda doğrulanmış durumda.** Kalan işler
+kod yazmak değil, operasyon: bir SQL dosyasını çalıştırmak, QR'ları basmak ve iki
+akışı (kayıt, kupon) canlıda bir kez denemek.
+
 ## Şu Anki Durum
 
 **Canlıda çalışan ve production'da elle doğrulanan:**
@@ -26,9 +42,11 @@ alır. Uygulama canlıda çalışıyor; kalan iş demoyu sahneye hazırlamak ve 
 - `NEXT_PUBLIC_DEMO_SKIP_GEOFENCE=true` etkin, "Demo modu" etiketi görünüyor
 - TR/EN dil anahtarı (header) — veritabanı değişikliği gerektirmez, hemen çalışır
 
-**Kodu yazıldı ama canlıda HİÇ test edilmedi:**
-- Kayıt / giriş (`/giris`). Test edilemedi çünkü Supabase'de "Confirm email" ayarının
-  kapatılması gerekiyor (aşağıda 2. adım).
+**Engeli kalktı, ama canlıda hâlâ test edilmedi:**
+- Kayıt / giriş (`/giris`). Supabase'de **"Confirm email" kapatıldı** (11 Ekim, takım
+  bildirdi), yani kayıt sonrası oturum artık doğrudan açılmalı — jüri önünde posta
+  kutusu açma derdi kalktı. Akışın kendisi (kayıt → `/profil` yönlendirmesi → çıkış →
+  tekrar giriş) canlıda hiç denenmedi. Demo provasına bunu da ekle.
 
 **Kodu yazıldı ama veritabanı göçü çalıştırılmadı, bu yüzden kapalı:**
 - Topluluk fotoğraf akışı (`/akis`) ve belediye etkinlik takvimi.
@@ -89,9 +107,9 @@ alır. Uygulama canlıda çalışıyor; kalan iş demoyu sahneye hazırlamak ve 
 
 1. **QR kodlarını yazdır.** Tarayıcıda https://kulturrotam.vercel.app/admin/qr aç, sağ üstteki "Yazdır"a bas. QR'lar sayfanın açıldığı adresi gömer; yerelden (`localhost:3000`) yazdırılan kodlar demoda çalışmaz.
 
-2. **Supabase'de e-posta doğrulamasını kapat.** Dashboard → Authentication → Sign In / Providers → Email → "Confirm email" kapalı olmalı. Açıkken kayıt sonrası oturum açılmaz ve jüri önünde e-posta kutusu açman gerekir. Kapattıktan sonra `/giris` sayfasında kayıt → `/profil`'e yönlenme → çıkış → tekrar giriş akışını canlıda dene. **Bu akış hiç test edilmedi.**
+2. ~~**Supabase'de e-posta doğrulamasını kapat.**~~ ✅ **Yapıldı** (11 Ekim): Dashboard → Authentication → Sign In / Providers → Email → "Confirm email" kapatıldı. **Kalan iş:** `/giris` sayfasında kayıt → `/profil`'e yönlenme → çıkış → tekrar giriş akışını canlıda bir kez dene. **Bu akış hiç test edilmedi.**
 
-3. **Zaman kalırsa `supabase/roadmap.sql`'i çalıştır.** Supabase Dashboard → SQL Editor → dosyayı yapıştır → Run. Türkçe karakterler `chr()` ile yazıldığı için panodan yapıştırmak güvenli. Sonra `src/components/SiteHeader.tsx` içindeki yorum satırının yerine Akış linkini geri ekle:
+3. **`supabase/roadmap.sql`'i çalıştır.** Supabase Dashboard → SQL Editor → dosyayı yapıştır → Run. Dosya denetlendi (11 Ekim): 149 satır, **tamamı ASCII** — Türkçe karakter hiç yok, yani panodan yapıştırınca bozulma riski sıfır. Ayrıca tam idempotent (`if not exists`, `drop policy if exists`, `create or replace`, `on conflict`); tekrar çalıştırmak veri silmez. **Bunu bir yapay zekâ oturumu senin yerine yapamaz:** veritabanı şifresi repoda değil, Dashboard erişimi gerekiyor. Sonra `src/components/SiteHeader.tsx` içindeki yorum satırının yerine Akış linkini geri ekle:
    ```tsx
    <Link className="rounded-full px-3 py-1.5 hover:bg-brand-soft" href="/akis">
      {t("nav_feed")}
