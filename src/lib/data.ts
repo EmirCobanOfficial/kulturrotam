@@ -68,12 +68,14 @@ export async function checkIn(
     p_lng: coords?.lng ?? null,
   });
   if (error) throw error;
+  pointsChanged();
   return data as CheckInResult;
 }
 
 export async function redeemCoupon(couponId: string) {
   const { data, error } = await supabase.rpc("redeem_coupon", { p_coupon: couponId });
   if (error) throw error;
+  pointsChanged();
   return data as {
     code: string;
     title: string;
@@ -85,4 +87,11 @@ export async function redeemCoupon(couponId: string) {
 export async function setNickname(nickname: string) {
   const { error } = await supabase.rpc("set_nickname", { p_nick: nickname });
   if (error) throw error;
+}
+
+/** Header'daki puan rozetinin kendini tazelemesi için. */
+export const POINTS_EVENT = "kr:points";
+
+function pointsChanged() {
+  if (typeof window !== "undefined") window.dispatchEvent(new Event(POINTS_EVENT));
 }

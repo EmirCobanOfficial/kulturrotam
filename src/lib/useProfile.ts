@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { fetchProfile } from "@/lib/data";
+import { POINTS_EVENT, fetchProfile } from "@/lib/data";
 import { ensureSession, supabaseConfigured } from "@/lib/supabase/client";
 
 export type ProfileState = {
@@ -47,5 +47,11 @@ export function useProfile(): ProfileState {
   }, [tick]);
 
   const reload = useCallback(() => setTick((t) => t + 1), []);
+
+  useEffect(() => {
+    window.addEventListener(POINTS_EVENT, reload);
+    return () => window.removeEventListener(POINTS_EVENT, reload);
+  }, [reload]);
+
   return { points, nickname, loading, error, reload };
 }

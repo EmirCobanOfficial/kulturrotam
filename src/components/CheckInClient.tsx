@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { checkIn, type CheckInResult } from "@/lib/data";
 import { ensureSession, supabaseConfigured } from "@/lib/supabase/client";
 
@@ -13,8 +13,12 @@ export default function CheckInClient({ token }: { token: string }) {
   const [phase, setPhase] = useState<Phase>("idle");
   const [result, setResult] = useState<CheckInResult | null>(null);
   const [message, setMessage] = useState<string | null>(null);
+  // StrictMode effect'i iki kez çağırır; ikinci çağrı "zaten aldın" dönüp ilk sonucu ezer.
+  const started = useRef(false);
 
   useEffect(() => {
+    if (started.current) return;
+    started.current = true;
     if (!supabaseConfigured) {
       setPhase("error");
       setMessage("Supabase ayarlı değil (.env.local eksik).");
@@ -26,6 +30,7 @@ export default function CheckInClient({ token }: { token: string }) {
 
   async function run() {
     try {
+      setMessage(null);
       await ensureSession();
       let coords: { lat: number; lng: number } | undefined;
 
