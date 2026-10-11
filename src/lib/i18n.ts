@@ -65,6 +65,53 @@ const DICT = {
     auth_signed_in_as: "Giriş yapıldı",
     auth_guest: "Misafir olarak geziyorsun.",
 
+    nav_about: "Hakkımızda",
+    nav_events: "Etkinlikler",
+
+    home_hero_title_1: "Bursa'yı keşfet.",
+    home_hero_title_2: "Kendi rotanı oluştur.",
+    home_hero_lead: "Tarih, lezzet ve etkinlikler. Sana uygun bir keşif.",
+    home_hero_cta: "Rotanı Oluştur",
+    home_hero_secondary: "Bursa'yı Keşfet",
+    home_hero_badge: "Keşfet, puan kazan",
+
+    home_quick_what: "Ne keşfetmek istersin?",
+    home_quick_time: "Ne kadar zamanın var?",
+    home_quick_how: "Nasıl gezmek istersin?",
+    home_quick_cta: "Rotamı Bul",
+    home_quick_walk: "Yürüyerek",
+    home_quick_transit: "Toplu taşıma",
+
+    home_today: "Bursa'da bugün",
+    home_card_culture: "Kültür Rotaları",
+    home_card_food: "Yerel Lezzetler",
+    home_card_events: "Etkinlikler",
+
+    home_events_title: "Etkinlikler ve duyurular",
+    home_events_lead: "Belediye takviminden bugüne ait başlıklar. Rota motoru o gün etkinliği olan mekanı öne alır.",
+    home_events_empty: "Bugün için kayıtlı etkinlik yok. Rotanı yine de oluşturabilirsin.",
+    home_events_all: "Rotanda gör",
+
+    home_partners_title: "İş birlikleri ve sponsorlar",
+    home_partners_lead: "Puanı gerçek indirime çeviren ve bağışa dönüştüren kurumlar. Anlaşmalar genişledikçe bu liste büyüyecek.",
+    home_partners_cta: "İş birliği için bize ulaş",
+
+    home_solo_title: "Bireysel mi geziyorsun?",
+    home_solo_body: "Tek başına gezmek, az gezmek demek değil. Süreni ve ilgi alanını söyle; sihirbaz sana özel, yürüme mesafesinde bir gün planı çıkarsın.",
+    home_solo_cta: "Kendi rotanı kur",
+
+    about_eyebrow: "HAKKIMIZDA",
+    about_title: "Bursa'dan başlayan bir keşif yolculuğu",
+    about_lead: "Kültür Rotam, Bursa'nın tarihî duraklarını, yeme-içme mekânlarını ve etkinliklerini tek bir yerde buluşturur. \u201cBugün ne yapabilirim?\u201d sorusundan yola çıkarak şehri ilgi alanına, zamanına ve gezi tercihlerine göre keşfetmeni kolaylaştırır.",
+    about_s1_title: "Bursa'yı hikâyeleriyle tanı",
+    about_s1_body: "Hanlardan müzelere, yerel lezzetlerden kültür etkinliklerine uzanan rotalarla kendi planını oluştur. Kısa anlatımlarla ziyaret ettiğin yerlerin hikâyelerini öğren, şehrin henüz tanımadığın köşelerini keşfet.",
+    about_s2_title: "Keşfet, katıl, kazan",
+    about_s2_body: "Keşif görevleri ve puanlarla gezileri daha eğlenceli hâle getirmeyi; yerel işletmelerle geliştireceğimiz fırsatlarla katılımı desteklemeyi hedefliyoruz.",
+    about_s3_title: "Sosyal faydayla büyüyoruz",
+    about_s3_body: "Amacımız, daha fazla insanın kültürel yaşama katılmasını kolaylaştırmak. Yerel işletmelerle şeffaf iş birlikleri kurarak bu amacı sürdürebilen bir sosyal girişim geliştiriyoruz.",
+    about_closing: "Bursa bizim ilk uygulama bölgemiz. Burada edindiğimiz deneyimi, zamanla Türkiye'nin farklı şehirlerine taşımayı hedefliyoruz.",
+    about_first_stop: "İlk durağımız Bursa.",
+
   },
   en: {
     nav_route: "Route",
@@ -121,6 +168,53 @@ const DICT = {
     auth_confirm_email: "We sent a confirmation link to your email. Sign in after confirming.",
     auth_signed_in_as: "Signed in",
     auth_guest: "You are browsing as a guest.",
+
+    nav_about: "About",
+    nav_events: "Events",
+
+    home_hero_title_1: "Discover Bursa.",
+    home_hero_title_2: "Build your own route.",
+    home_hero_lead: "History, flavour and events. A trip shaped around you.",
+    home_hero_cta: "Build Your Route",
+    home_hero_secondary: "Explore Bursa",
+    home_hero_badge: "Explore, earn points",
+
+    home_quick_what: "What would you like to see?",
+    home_quick_time: "How much time do you have?",
+    home_quick_how: "How do you want to travel?",
+    home_quick_cta: "Find My Route",
+    home_quick_walk: "On foot",
+    home_quick_transit: "Public transport",
+
+    home_today: "Today in Bursa",
+    home_card_culture: "Culture Routes",
+    home_card_food: "Local Flavours",
+    home_card_events: "Events",
+
+    home_events_title: "Events and announcements",
+    home_events_lead: "Today's entries from the municipal calendar. The route engine moves a place with an event today to the front.",
+    home_events_empty: "No events listed for today. You can still build your route.",
+    home_events_all: "See it on your route",
+
+    home_partners_title: "Partners and sponsors",
+    home_partners_lead: "The organisations that turn points into real discounts and donations. This list grows as partnerships do.",
+    home_partners_cta: "Get in touch about a partnership",
+
+    home_solo_title: "Travelling on your own?",
+    home_solo_body: "Going alone does not mean seeing less. Tell us your time and interests, and the wizard lays out a walkable day planned around you.",
+    home_solo_cta: "Build your own route",
+
+    about_eyebrow: "ABOUT US",
+    about_title: "A journey of discovery that starts in Bursa",
+    about_lead: "Kultur Rotam brings Bursa's historic stops, places to eat and events together in one place. Starting from the question \u201cwhat can I do today?\u201d, it makes the city easier to explore around your interests, your time and how you like to travel.",
+    about_s1_title: "Meet Bursa through its stories",
+    about_s1_body: "Build your own plan from routes that run from the old hans to the museums, from local flavours to cultural events. Short readings tell you the story of each place you visit, and show you corners of the city you have not met yet.",
+    about_s2_title: "Explore, take part, earn",
+    about_s2_body: "We want discovery missions and points to make these trips more fun, and the offers we build with local businesses to keep people taking part.",
+    about_s3_title: "We grow through social impact",
+    about_s3_body: "Our aim is to make it easier for more people to take part in cultural life. We are building a social enterprise that sustains that aim through transparent partnerships with local businesses.",
+    about_closing: "Bursa is our first region. In time we aim to carry what we learn here to other cities in Turkiye.",
+    about_first_stop: "Our first stop is Bursa.",
 
   },
 } as const;
