@@ -10,6 +10,7 @@ Osmangazi Hackathon, Takım 13. Bursa/Osmangazi için kişiselleştirilmiş kül
 - QR check-in (`/checkin/[token]`) → puan + rozet; aynı mekandan ikinci puan yok
 - Ödül cüzdanı (`/oduller`) → puan düşer, kupon kodu üretilir; puan yetmezse reddedilir
 - Profil (`/profil`), QR yazdırma sayfası (`/admin/qr`)
+- Kayıt / giriş (`/giris`) → e-posta + şifre. Anonim gezen kullanıcı kayıt olunca **aynı `auth.uid()` ile kalıcıya dönüşür**, puan ve rozetler korunur (`supabase.auth.updateUser`). Header'da Giriş/Çıkış, profilde hesap satırı.
 - TR/EN dil anahtarı (header) → mekan adı/açıklaması `name_en`/`description_en` alanlarından gelir
 - Topluluk fotoğraf akışı (`/akis`) → Supabase Storage'a yükleme, fotoğraf başına tek oy
 - Belediye etkinlik takvimi → `events` tablosu; rota motoru o gün etkinliği olan mekanı öne alır ve durağa rozet iliştirir
@@ -29,6 +30,7 @@ Supabase projesi `ooyjctgdfkexjybiqjti` kurulu: şema + seed yüklü, anonymous 
 - Next.js App Router + TypeScript + Tailwind. Ayrı API katmanı yok: istemci doğrudan Supabase'e konuşur.
 - Puan, rozet ve kupon harcaması **veritabanındaki `security definer` fonksiyonlarında** yapılır (`check_in`, `redeem_coupon`, `set_nickname`). Bu mantığı istemciye taşıma — sahnede yanlış puan çıkmasın.
 - Tüm tablolarda RLS açık; istemciye hiçbir tabloda `insert`/`update` yetkisi verilmez. Tek istisna `storage.objects`: fotoğraf yüklemek için gerekli, istemci yalnızca kendi `auth.uid()` klasörüne yazabilir. `photos` satırını yine `add_photo()` oluşturur.
+- Anonim oturum temel durumdur: `ensureSession()` her zaman bir oturum açar, kayıt onu yükseltir. Kayıt akışını `signIn`/`signUp` yerine yeni bir kullanıcı yaratacak şekilde değiştirme — puanlar kaybolur.
 - Arayüz metinleri `src/lib/i18n.ts` sözlüğünde; bileşene düz Türkçe string gömme, `t("...")` kullan.
 - Supabase hataları `Error` değil düz nesnedir; `instanceof Error` yerine `errorText()` (`src/lib/errors.ts`) kullan, yoksa gerçek sebep "bilinmeyen hata"ya dönüşür.
 - Rota motoru (`src/lib/route/plan.ts`) saf fonksiyon, Supabase'den bağımsız ve testli. Rota kuralı değiştirirsen `src/lib/route/plan.test.ts`'i güncelle.
@@ -38,6 +40,7 @@ Supabase projesi `ooyjctgdfkexjybiqjti` kurulu: şema + seed yüklü, anonymous 
 
 - **Türkçe karakterler Supabase SQL editörüne panodan yapıştırılırsa bozulur** (Chrome→Monaco encoding; "Müzesi" → "M√ºzesi"). Elle yapıştıracaksan önce ASCII'ye çevir: her non-ASCII karakteri `'||chr(<kod>)||'` ile değiştir. `psql` veya Supabase CLI kullanırsan sorun yok.
 - `.env.local` git'te yok. Yoksa `cp .env.local.example .env.local` ve Dashboard → Connect'ten doldur.
+- **Supabase'de e-posta doğrulaması açıksa** kayıt sonrası oturum gelmez; kullanıcı posta kutusuna erişemediği demoda giriş yapamaz. Dashboard → Authentication → Sign In / Providers → Email → "Confirm email" kapalı olmalı. Kod iki durumu da yönetir: doğrulama gerekiyorsa ekranda bilgilendirme çıkar.
 - Leaflet SSR'da patlar; harita bileşeni `dynamic(..., { ssr: false })` ile yüklenmeli.
 - `NEXT_PUBLIC_DEMO_SKIP_GEOFENCE=true` iken check-in konum kontrolünü atlar ve ekranda "demo modu" etiketi gösterir. Jüri salonunda mekana 300 m yakın olunamayacağı için demoda açık kalmalı; etiketi gizleme, jüriye açıkça söyle.
 

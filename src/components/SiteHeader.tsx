@@ -2,10 +2,12 @@
 
 import Link from "next/link";
 import { useLang } from "@/lib/i18n";
+import { errorText } from "@/lib/errors";
+import { signOut } from "@/lib/supabase/client";
 import { useProfile } from "@/lib/useProfile";
 
 export default function SiteHeader() {
-  const { points, loading } = useProfile();
+  const { points, loading, signedIn, reload } = useProfile();
   const { lang, t, toggle } = useLang();
 
   return (
@@ -25,6 +27,25 @@ export default function SiteHeader() {
           <Link className="rounded-full px-3 py-1.5 hover:bg-brand-soft" href="/profil">
             {t("nav_profile")}
           </Link>
+          {signedIn ? (
+            <button
+              onClick={async () => {
+                try {
+                  await signOut();
+                } catch (e) {
+                  console.error(errorText(e));
+                }
+                reload();
+              }}
+              className="rounded-full px-3 py-1.5 hover:bg-brand-soft"
+            >
+              {t("nav_signout")}
+            </button>
+          ) : (
+            <Link className="rounded-full px-3 py-1.5 hover:bg-brand-soft" href="/giris">
+              {t("nav_signin")}
+            </Link>
+          )}
           <button
             onClick={toggle}
             aria-label={lang === "tr" ? "Switch to English" : "Türkçeye geç"}

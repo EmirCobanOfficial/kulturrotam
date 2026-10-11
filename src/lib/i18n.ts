@@ -50,6 +50,21 @@ const DICT = {
     feed_voted: "Beğendin",
     feed_need_file: "Önce bir fotoğraf seç.",
 
+    nav_signin: "Giriş",
+    nav_signout: "Çıkış",
+    auth_signup: "Kayıt ol",
+    auth_signin: "Giriş yap",
+    auth_signup_title: "Hesap oluştur",
+    auth_signin_title: "Tekrar hoş geldin",
+    auth_email: "E-posta",
+    auth_password: "Şifre",
+    auth_password_hint: "En az 6 karakter.",
+    auth_password_short: "Şifre en az 6 karakter olmalı.",
+    auth_keeps_points: "Topladığın puanlar ve rozetler hesabına taşınır.",
+    auth_confirm_email: "E-postana doğrulama bağlantısı gönderdik. Onayladıktan sonra giriş yapabilirsin.",
+    auth_signed_in_as: "Giriş yapıldı",
+    auth_guest: "Misafir olarak geziyorsun.",
+
   },
   en: {
     nav_route: "Route",
@@ -91,6 +106,21 @@ const DICT = {
     feed_vote: "Like",
     feed_voted: "Liked",
     feed_need_file: "Pick a photo first.",
+
+    nav_signin: "Sign in",
+    nav_signout: "Sign out",
+    auth_signup: "Sign up",
+    auth_signin: "Sign in",
+    auth_signup_title: "Create an account",
+    auth_signin_title: "Welcome back",
+    auth_email: "Email",
+    auth_password: "Password",
+    auth_password_hint: "At least 6 characters.",
+    auth_password_short: "Password must be at least 6 characters.",
+    auth_keeps_points: "Your points and badges move to the account.",
+    auth_confirm_email: "We sent a confirmation link to your email. Sign in after confirming.",
+    auth_signed_in_as: "Signed in",
+    auth_guest: "You are browsing as a guest.",
 
   },
 } as const;

@@ -8,10 +8,17 @@ import {
   fetchProfile,
   setNickname as saveNickname,
 } from "@/lib/data";
-import { ensureSession, supabaseConfigured } from "@/lib/supabase/client";
+import { errorText } from "@/lib/errors";
+import { useLang } from "@/lib/i18n";
+import { accountState, ensureSession, supabaseConfigured } from "@/lib/supabase/client";
 import type { Badge, Place } from "@/lib/types";
 
 export default function ProfilePage() {
+  const { t } = useLang();
+  const [account, setAccount] = useState<{ signedIn: boolean; email: string | null }>({
+    signedIn: false,
+    email: null,
+  });
   const [points, setPoints] = useState(0);
   const [nickname, setNick] = useState("");
   const [badges, setBadges] = useState<Badge[]>([]);
@@ -23,17 +30,19 @@ export default function ProfilePage() {
   async function load() {
     try {
       await ensureSession();
-      const [profile, b, v] = await Promise.all([
+      const [profile, b, v, acc] = await Promise.all([
         fetchProfile(),
         fetchMyBadges(),
         fetchMyVisits(),
+        accountState(),
       ]);
+      setAccount({ signedIn: acc.signedIn, email: acc.email });
       setPoints(profile?.points ?? 0);
       setNick(profile?.nickname ?? "");
       setBadges(b);
       setVisits(v);
     } catch (e) {
-      setError(e instanceof Error ? e.message : "hata");
+      setError(errorText(e));
     } finally {
       setLoading(false);
     }
@@ -59,6 +68,24 @@ export default function ProfilePage() {
 
   return (
     <div className="mx-auto max-w-2xl px-4 py-10">
+      <div className="mb-4 flex flex-wrap items-center gap-2 rounded-xl border border-line bg-surface px-4 py-3 text-sm">
+        {account.signedIn ? (
+          <span className="text-muted">
+            {t("auth_signed_in_as")}: <strong className="text-foreground">{account.email}</strong>
+          </span>
+        ) : (
+          <>
+            <span className="text-muted">{t("auth_guest")}</span>
+            <Link
+              href="/giris"
+              className="ml-auto rounded-full bg-brand px-4 py-1.5 font-semibold text-white"
+            >
+              {t("auth_signup")}
+            </Link>
+          </>
+        )}
+      </div>
+
       <div className="rounded-xl border border-line bg-surface p-6">
         <div className="flex items-center justify-between">
           <div>
