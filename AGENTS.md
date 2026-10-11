@@ -12,4 +12,4 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 Hangi aracı kullanırsan kullan (Claude Code, Gemini CLI, Cursor, Codex), önce
 `CLAUDE.md` dosyasını oku. Projenin durumu, mimari kuralları ve bilinen tuzakları
-orada. `GEMINI.md` aynı dosyaya bağlıdır (symlink).
+orada. `GEMINI.md` de oraya yönlendirir.
