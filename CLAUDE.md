@@ -13,7 +13,9 @@ Osmangazi Hackathon, Takım 13. Bursa/Osmangazi için kişiselleştirilmiş kül
 
 Supabase projesi `ooyjctgdfkexjybiqjti` kurulu: şema + seed yüklü, anonymous sign-in açık.
 
-**Kalan iş: Vercel deploy.** Repoyu bağla, üç env değişkenini gir, deploy et. QR kodları deploy edilen domaini kullanır; `/admin/qr`'ı deploy sonrası yazdır.
+**Canlı: https://kulturrotam.vercel.app** (Vercel projesi `emir-coban-official/kulturrotam`, `main` dalına her push otomatik deploy olur). Üç `NEXT_PUBLIC_*` değişkeni Production ve Preview için girili. Production'da doğrulandı: sihirbaz rota üretiyor, check-in puan veriyor, ikinci tarama puan vermiyor, demo modu etiketi görünüyor.
+
+**Kalan iş: QR kodlarını yazdır.** `/admin/qr` sayfasını canlı domainden aç ve yazdır — QR değerleri `window.location.origin` ile üretilir, yerelden yazdırılan kodlar `localhost` gösterir.
 
 ## Mimari kuralları
 
