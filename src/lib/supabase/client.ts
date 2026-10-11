@@ -36,6 +36,17 @@ export async function accountState(): Promise<AccountState> {
 }
 
 /**
+ * Doğrulama maili tıklandığında kullanıcının döneceği adres. Sabit yazmak yerine
+ * açık olan sayfanın kökünü kullanırız: production, Vercel preview ve yerelde
+ * aynı kod doğru adrese döner. Supabase bu adresi yalnızca Authentication →
+ * URL Configuration → Redirect URLs listesinde varsa kabul eder.
+ */
+function emailRedirectTo() {
+  if (typeof window === "undefined") return undefined;
+  return `${window.location.origin}/profil`;
+}
+
+/**
  * Kayıt. Zaten anonim oturum varsa onu kalıcıya çevirir: kullanıcı kimliği
  * (ve dolayısıyla toplanan puan, rozet, ziyaretler) aynı kalır.
  */
@@ -44,14 +55,21 @@ export async function signUp(email: string, password: string): Promise<{ needsCo
   const user = data.session?.user;
 
   if (user && !user.email) {
-    const { error } = await supabase.auth.updateUser({ email, password });
+    const { error } = await supabase.auth.updateUser(
+      { email, password },
+      { emailRedirectTo: emailRedirectTo() },
+    );
     if (error) throw error;
     // Doğrulama açıksa e-posta onaylanana kadar hesap anonim kalır.
     const after = await supabase.auth.getSession();
     return { needsConfirmation: !after.data.session?.user.email };
   }
 
-  const { data: created, error } = await supabase.auth.signUp({ email, password });
+  const { data: created, error } = await supabase.auth.signUp({
+    email,
+    password,
+    options: { emailRedirectTo: emailRedirectTo() },
+  });
   if (error) throw error;
   return { needsConfirmation: !created.session };
 }
