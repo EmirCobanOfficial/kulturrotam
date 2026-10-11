@@ -14,6 +14,16 @@ import { errorText } from "@/lib/errors";
 import { ensureSession, supabaseConfigured } from "@/lib/supabase/client";
 import type { Photo, Place } from "@/lib/types";
 
+const FEED_NOT_READY =
+  "Fotoğraf akışı henüz açık değil: supabase/roadmap.sql çalıştırılmalı.";
+
+/** Tablolar/bucket yoksa Postgres 42P01 döner; bunu ham hata olarak gösterme. */
+function missingTables(e: unknown): boolean {
+  if (typeof e !== "object" || e === null) return false;
+  const code = (e as { code?: unknown }).code;
+  return code === "42P01" || code === "PGRST205";
+}
+
 export default function FeedPage() {
   const { lang, t } = useLang();
   const [places, setPlaces] = useState<Place[]>([]);
@@ -43,7 +53,7 @@ export default function FeedPage() {
       setVotedIds(new Set(votes));
       if (!placeId && placeRows.length > 0) setPlaceId(placeRows[0].id);
     } catch (e) {
-      setError(errorText(e));
+      setError(missingTables(e) ? FEED_NOT_READY : errorText(e));
     }
     // placeId sadece ilk yuklemede varsayilan atanir; bagimlilik olarak eklenmez.
     // eslint-disable-next-line react-hooks/exhaustive-deps

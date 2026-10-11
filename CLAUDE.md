@@ -18,7 +18,9 @@ Supabase projesi `ooyjctgdfkexjybiqjti` kurulu: şema + seed yüklü, anonymous 
 
 **Canlı: https://kulturrotam.vercel.app** (Vercel projesi `emir-coban-official/kulturrotam`, `main` dalına her push otomatik deploy olur). Üç `NEXT_PUBLIC_*` değişkeni Production ve Preview için girili. Production'da doğrulandı: sihirbaz rota üretiyor, check-in puan veriyor, ikinci tarama puan vermiyor, demo modu etiketi görünüyor.
 
-**Yeni tablolar için `supabase/roadmap.sql` çalıştırılmalı** (`events`, `photos`, `photo_votes`, `photos` storage bucket'ı). schema.sql'e ek olarak çalışır, mevcut veriyi silmez, tekrar çalıştırılabilir. Çalıştırılmadan `/akis` boş kalır ve rotada etkinlik rozeti çıkmaz — rota yine çizilir.
+**`supabase/roadmap.sql` henüz çalıştırılmadı** (hackathon zamanı yetmedi). İçinde `events`, `photos`, `photo_votes` tabloları ve `photos` storage bucket'ı var; schema.sql'e ek olarak çalışır, mevcut veriyi silmez, tekrar çalıştırılabilir.
+
+Çalıştırılana kadar: kod hazır ama veri yok. `/akis` "henüz açık değil" mesajı gösterir ve header'daki Akış linki gizlidir (`SiteHeader.tsx`'te yorum satırı — SQL çalışınca geri ekle). Rotada etkinlik rozeti çıkmaz; rota normal çizilir, demo etkilenmez.
 
 **Kalan iş: QR kodlarını yazdır.** `/admin/qr` sayfasını canlı domainden aç ve yazdır — QR değerleri `window.location.origin` ile üretilir, yerelden yazdırılan kodlar `localhost` gösterir.
 
