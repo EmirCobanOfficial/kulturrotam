@@ -2,26 +2,16 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { BUDGET_LABEL, INTEREST_LABEL, useLang } from "@/lib/i18n";
 import type { RoutePrefs } from "@/lib/types";
 
-const INTERESTS = [
-  { id: "tarihi", label: "Tarihi mekanlar" },
-  { id: "muze", label: "Müzeler" },
-  { id: "mimari", label: "Mimari" },
-  { id: "manzara", label: "Manzara & fotoğraf" },
-  { id: "alisveris", label: "Çarşı & alışveriş" },
-  { id: "bahce", label: "Park & bahçe" },
-];
+const INTERESTS = ["tarihi", "muze", "mimari", "manzara", "alisveris", "bahce"];
 
-const BUDGETS = [
-  { value: 0, label: "Ücretsiz", sub: "Sadece bedava mekanlar" },
-  { value: 1, label: "Ekonomik", sub: "Küçük girişler" },
-  { value: 2, label: "Orta", sub: "Müze + yemek" },
-  { value: 3, label: "Rahat", sub: "Fark etmez" },
-];
+const BUDGETS = [0, 1, 2, 3];
 
 export default function WizardPage() {
   const router = useRouter();
+  const { lang, t } = useLang();
   const [step, setStep] = useState(0);
   const [startHour, setStartHour] = useState(10);
   const [hours, setHours] = useState(4);
@@ -50,10 +40,10 @@ export default function WizardPage() {
 
   const steps = [
     {
-      title: "Ne zaman geziyorsun?",
+      title: t("wizard_when"),
       body: (
         <div className="space-y-6">
-          <Field label={`Başlangıç saati: ${startHour}:00`}>
+          <Field label={`${t("wizard_start")}: ${startHour}:00`}>
             <input
               type="range"
               min={8}
@@ -63,7 +53,7 @@ export default function WizardPage() {
               className="w-full accent-[var(--brand)]"
             />
           </Field>
-          <Field label={`Kaç saat ayırıyorsun: ${hours} saat`}>
+          <Field label={`${t("wizard_hours")}: ${hours} ${t("hours_unit")}`}>
             <input
               type="range"
               min={2}
@@ -77,22 +67,22 @@ export default function WizardPage() {
       ),
     },
     {
-      title: "Neye ilgin var?",
+      title: t("wizard_interests"),
       body: (
         <div className="grid grid-cols-2 gap-3">
-          {INTERESTS.map((item) => {
-            const active = interests.includes(item.id);
+          {INTERESTS.map((id) => {
+            const active = interests.includes(id);
             return (
               <button
-                key={item.id}
-                onClick={() => toggleInterest(item.id)}
+                key={id}
+                onClick={() => toggleInterest(id)}
                 className={`rounded-xl border p-4 text-left text-sm font-medium transition ${
                   active
                     ? "border-brand bg-brand-soft text-brand"
                     : "border-line bg-surface hover:border-brand"
                 }`}
               >
-                {item.label}
+                {INTEREST_LABEL[lang][id]}
               </button>
             );
           })}
@@ -100,23 +90,23 @@ export default function WizardPage() {
       ),
     },
     {
-      title: "Bütçen?",
+      title: t("wizard_budget"),
       body: (
         <div className="grid grid-cols-2 gap-3">
-          {BUDGETS.map((b) => {
-            const active = budget === b.value;
+          {BUDGETS.map((value) => {
+            const active = budget === value;
             return (
               <button
-                key={b.value}
-                onClick={() => setBudget(b.value)}
+                key={value}
+                onClick={() => setBudget(value)}
                 className={`rounded-xl border p-4 text-left transition ${
                   active
                     ? "border-brand bg-brand-soft"
                     : "border-line bg-surface hover:border-brand"
                 }`}
               >
-                <div className="font-semibold">{b.label}</div>
-                <div className="text-xs text-muted">{b.sub}</div>
+                <div className="font-semibold">{BUDGET_LABEL[lang][value].label}</div>
+                <div className="text-xs text-muted">{BUDGET_LABEL[lang][value].sub}</div>
               </button>
             );
           })}
@@ -124,7 +114,7 @@ export default function WizardPage() {
       ),
     },
     {
-      title: "Yemek molası?",
+      title: t("wizard_meal"),
       body: (
         <div className="grid grid-cols-2 gap-3">
           <button
@@ -133,7 +123,7 @@ export default function WizardPage() {
               wantsFood ? "border-brand bg-brand-soft" : "border-line bg-surface"
             }`}
           >
-            Evet, rotaya ekle
+            {t("wizard_meal_yes")}
           </button>
           <button
             onClick={() => setWantsFood(false)}
@@ -141,7 +131,7 @@ export default function WizardPage() {
               !wantsFood ? "border-brand bg-brand-soft" : "border-line bg-surface"
             }`}
           >
-            Hayır, gerek yok
+            {t("wizard_meal_no")}
           </button>
         </div>
       ),
@@ -172,7 +162,7 @@ export default function WizardPage() {
             onClick={() => setStep((s) => s - 1)}
             className="rounded-full border border-line bg-surface px-5 py-2.5 font-medium hover:bg-brand-soft"
           >
-            Geri
+            {t("wizard_back")}
           </button>
         )}
         <button
@@ -180,7 +170,7 @@ export default function WizardPage() {
           disabled={step === 1 && interests.length === 0}
           className="ml-auto rounded-full bg-brand px-6 py-2.5 font-semibold text-white hover:opacity-90 disabled:opacity-40"
         >
-          {last ? "Rotamı çiz" : "Devam"}
+          {last ? t("wizard_submit") : t("wizard_next")}
         </button>
       </div>
     </div>

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { planRoute } from "./plan";
-import type { Place, RoutePrefs } from "@/lib/types";
+import type { EventItem, Place, RoutePrefs } from "@/lib/types";
 
 function place(over: Partial<Place> & { slug: string }): Place {
   return {
@@ -16,6 +16,7 @@ function place(over: Partial<Place> & { slug: string }): Place {
     close_hour: 20,
     tags: [],
     description_tr: null,
+    description_en: null,
     image_url: null,
     qr_token: over.slug,
     points_reward: 50,
@@ -79,5 +80,42 @@ describe("planRoute", () => {
       place({ slug: "lokanta", category: "yemek", open_hour: 11, close_hour: 23 }),
     ]);
     expect(stops.some((s) => s.place.category === "yemek")).toBe(false);
+  });
+});
+
+function event(placeId: string): EventItem {
+  return {
+    id: `ev-${placeId}`,
+    place_id: placeId,
+    title_tr: "etkinlik",
+    title_en: null,
+    starts_at: "2026-10-11T10:00:00Z",
+    ends_at: "2026-10-11T18:00:00Z",
+    source: "belediye",
+  };
+}
+
+describe("planRoute etkinlikler", () => {
+  it("etkinlikli mekanı öne alır", () => {
+    const places = [
+      place({ slug: "sade", lat: 40.183, lng: 29.062 }),
+      place({ slug: "etkinlikli", lat: 40.183, lng: 29.062 }),
+    ];
+    const stops = planRoute({ ...prefs, wantsFood: false }, places, [event("etkinlikli")]);
+    expect(stops[0].place.slug).toBe("etkinlikli");
+  });
+
+  it("etkinliği durağa iliştirir, diğer duraklarda bırakmaz", () => {
+    const places = [place({ slug: "a" }), place({ slug: "b" })];
+    const stops = planRoute({ ...prefs, wantsFood: false }, places, [event("a")]);
+    const withEvent = stops.find((s) => s.place.slug === "a");
+    const without = stops.find((s) => s.place.slug === "b");
+    expect(withEvent?.event?.title_tr).toBe("etkinlik");
+    expect(without?.event).toBeUndefined();
+  });
+
+  it("etkinlik listesi boşken eskisi gibi çalışır", () => {
+    const places = [place({ slug: "a" }), place({ slug: "b" })];
+    expect(planRoute({ ...prefs, wantsFood: false }, places)).toHaveLength(2);
   });
 });

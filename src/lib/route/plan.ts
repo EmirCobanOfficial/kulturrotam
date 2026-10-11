@@ -1,4 +1,4 @@
-import type { Place, RoutePrefs, RouteStop } from "@/lib/types";
+import type { EventItem, Place, RoutePrefs, RouteStop } from "@/lib/types";
 import { walkMinutes } from "./haversine";
 
 /** Öğle ve akşam yemeği pencereleri, dakika cinsinden. */
@@ -10,14 +10,24 @@ const MEAL_WINDOWS: [number, number][] = [
 /** Yakınlığı skora çevirirken 1 puan kaç dakika yürümeye bedel. */
 const MINUTES_PER_SCORE_POINT = 8;
 
-export function planRoute(prefs: RoutePrefs, places: Place[]): RouteStop[] {
+/** Bugün etkinliği olan mekan, bir ilgi alanı eşleşmesi kadar öne çıkar. */
+const EVENT_BONUS = 10;
+
+export function planRoute(
+  prefs: RoutePrefs,
+  places: Place[],
+  events: EventItem[] = [],
+): RouteStop[] {
+  const eventByPlace = new Map(events.map((e) => [e.place_id, e]));
   const affordable = places.filter((p) => p.cost_level <= prefs.budget);
   const sights = affordable.filter((p) => p.category !== "yemek");
   const foods = affordable.filter((p) => p.category === "yemek");
 
   const endOfTrip = prefs.startHour * 60 + prefs.hours * 60;
   const stops: RouteStop[] = [];
-  const pending = [...sights].sort((a, b) => score(b, prefs) - score(a, prefs));
+  const pending = [...sights].sort(
+    (a, b) => score(b, prefs, eventByPlace) - score(a, prefs, eventByPlace),
+  );
 
   let clock = prefs.startHour * 60;
   let current: Place | null = null;
@@ -25,7 +35,7 @@ export function planRoute(prefs: RoutePrefs, places: Place[]): RouteStop[] {
 
   while (pending.length > 0) {
     if (prefs.wantsFood && !mealTaken && inMealWindow(clock)) {
-      const meal = pickMeal(foods, current, clock, endOfTrip);
+      const meal = pickMeal(foods, current, clock, endOfTrip, eventByPlace);
       if (meal) {
         stops.push(meal);
         clock = meal.departure;
@@ -37,10 +47,10 @@ export function planRoute(prefs: RoutePrefs, places: Place[]): RouteStop[] {
       mealTaken = true;
     }
 
-    const index = pickNext(pending, current, prefs);
+    const index = pickNext(pending, current, prefs, eventByPlace);
     const place = pending[index];
     const travelMinutes = current ? walkMinutes(current, place) : 0;
-    const stop = fit(place, clock, travelMinutes, endOfTrip, false);
+    const stop = fit(place, clock, travelMinutes, endOfTrip, false, eventByPlace);
 
     pending.splice(index, 1);
     if (!stop) continue; // bu mekan sığmadı; diğerlerini dene
@@ -53,20 +63,30 @@ export function planRoute(prefs: RoutePrefs, places: Place[]): RouteStop[] {
   return stops;
 }
 
-/** İlgi alanı kesişimi + mekanın kendi puan ödülü. */
-function score(place: Place, prefs: RoutePrefs): number {
+/** İlgi alanı kesişimi + mekanın kendi puan ödülü + bugünkü etkinlik. */
+function score(
+  place: Place,
+  prefs: RoutePrefs,
+  eventByPlace: Map<string, EventItem>,
+): number {
   const labels = new Set([place.category, ...place.tags]);
   const matches = prefs.interests.filter((i) => labels.has(i)).length;
-  return matches * 10 + place.points_reward / 50;
+  const bonus = eventByPlace.has(place.id) ? EVENT_BONUS : 0;
+  return matches * 10 + place.points_reward / 50 + bonus;
 }
 
 /** Skoru yüksek ama yürüme mesafesi kısa olanı seç. */
-function pickNext(pending: Place[], current: Place | null, prefs: RoutePrefs): number {
+function pickNext(
+  pending: Place[],
+  current: Place | null,
+  prefs: RoutePrefs,
+  eventByPlace: Map<string, EventItem>,
+): number {
   let best = 0;
   let bestValue = -Infinity;
   pending.forEach((place, i) => {
     const travel = current ? walkMinutes(current, place) : 0;
-    const value = score(place, prefs) - travel / MINUTES_PER_SCORE_POINT;
+    const value = score(place, prefs, eventByPlace) - travel / MINUTES_PER_SCORE_POINT;
     if (value > bestValue) {
       bestValue = value;
       best = i;
@@ -80,13 +100,14 @@ function pickMeal(
   current: Place | null,
   clock: number,
   endOfTrip: number,
+  eventByPlace: Map<string, EventItem>,
 ): RouteStop | null {
   const sorted = current
     ? [...foods].sort((a, b) => walkMinutes(current, a) - walkMinutes(current, b))
     : foods;
   for (const food of sorted) {
     const travel = current ? walkMinutes(current, food) : 0;
-    const stop = fit(food, clock, travel, endOfTrip, true);
+    const stop = fit(food, clock, travel, endOfTrip, true, eventByPlace);
     if (stop) return stop;
   }
   return null;
@@ -102,12 +123,16 @@ function fit(
   travelMinutes: number,
   endOfTrip: number,
   isMeal: boolean,
+  eventByPlace: Map<string, EventItem>,
 ): RouteStop | null {
   const arrival = Math.max(clock + travelMinutes, place.open_hour * 60);
   const departure = arrival + place.visit_minutes;
   if (departure > place.close_hour * 60) return null;
   if (departure > endOfTrip) return null;
-  return { place, arrival, departure, travelMinutes, isMeal };
+  const event = eventByPlace.get(place.id);
+  return event
+    ? { place, arrival, departure, travelMinutes, isMeal, event }
+    : { place, arrival, departure, travelMinutes, isMeal };
 }
 
 function inMealWindow(minutes: number): boolean {

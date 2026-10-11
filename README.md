@@ -62,4 +62,6 @@ supabase/            schema.sql, seed.sql
 
 ## Roadmap (sunumda)
 
-Çoklu dil (TR/EN — şema hazır), topluluk fotoğraf akışı ve oylama, "yol arkadaşı bul", belediye etkinlik takvimi, esnaf self-servis paneli, sosyal etki fonu.
+Tamamlandı: çoklu dil (TR/EN), topluluk fotoğraf akışı ve oylama, belediye etkinlik takvimi.
+
+Sırada: "yol arkadaşı bul", esnaf self-servis paneli (şimdilik kuponları biz giriyoruz), sosyal etki fonu.

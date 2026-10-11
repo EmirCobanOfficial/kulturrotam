@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { checkIn, type CheckInResult } from "@/lib/data";
+import { errorText } from "@/lib/errors";
 import { ensureSession, supabaseConfigured } from "@/lib/supabase/client";
 
 const SKIP_GEOFENCE = process.env.NEXT_PUBLIC_DEMO_SKIP_GEOFENCE === "true";
@@ -44,7 +45,7 @@ export default function CheckInClient({ token }: { token: string }) {
       setResult(data);
       setPhase("done");
     } catch (e) {
-      setMessage(e instanceof Error ? e.message : "bilinmeyen hata");
+      setMessage(errorText(e));
       setPhase("error");
     }
   }

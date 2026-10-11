@@ -14,6 +14,7 @@ export type Place = {
   close_hour: number;
   tags: string[];
   description_tr: string | null;
+  description_en: string | null;
   image_url: string | null;
   qr_token: string;
   points_reward: number;
@@ -69,4 +70,25 @@ export type RouteStop = {
   /** Önceki duraktan yürüme süresi, dakika. */
   travelMinutes: number;
   isMeal: boolean;
+  /** O gün bu mekanda etkinlik varsa. Rota motoru etkinlikli mekanı öne alır. */
+  event?: EventItem;
+};
+
+export type EventItem = {
+  id: string;
+  place_id: string;
+  title_tr: string;
+  title_en: string | null;
+  starts_at: string;
+  ends_at: string;
+  source: string;
+};
+
+export type Photo = {
+  id: string;
+  place_id: string;
+  storage_path: string;
+  caption: string | null;
+  votes: number;
+  created_at: string;
 };
