@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { BUDGET_LABEL, INTEREST_LABEL, useLang } from "@/lib/i18n";
 import type { RoutePrefs } from "@/lib/types";
 
@@ -18,6 +18,23 @@ export default function WizardPage() {
   const [interests, setInterests] = useState<string[]>(["tarihi"]);
   const [budget, setBudget] = useState(2);
   const [wantsFood, setWantsFood] = useState(true);
+
+  // Ana sayfadaki hızlı başlangıç çubuğundan gelen seçimleri uygula.
+  // useSearchParams yerine mount sonrası okuyoruz: sayfa statik kalır ve
+  // sunucu/istemci arasında hydration uyuşmazlığı çıkmaz.
+  useEffect(() => {
+    const q = new URLSearchParams(window.location.search);
+
+    const fromUrl = (q.get("interests") ?? "").split(",").filter(Boolean);
+    const known = fromUrl.filter((i) => INTERESTS.includes(i));
+    if (known.length > 0) setInterests(known);
+
+    const h = Number(q.get("hours"));
+    if (Number.isFinite(h) && h >= 1 && h <= 12) setHours(h);
+
+    const food = q.get("food");
+    if (food === "1" || food === "0") setWantsFood(food === "1");
+  }, []);
 
   function toggleInterest(id: string) {
     setInterests((prev) =>

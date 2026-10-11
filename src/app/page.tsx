@@ -4,10 +4,11 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import Reveal from "@/components/Reveal";
 import { fetchPlaces, fetchTodayEvents } from "@/lib/data";
-import { CATEGORY_LABEL, eventTitle, placeName, useLang } from "@/lib/i18n";
+import { INTEREST_LABEL, eventTitle, placeName, useLang } from "@/lib/i18n";
 import type { EventItem, Place } from "@/lib/types";
 
-const INTERESTS = ["tarihi", "muze", "yemek", "park"] as const;
+// Sihirbazdaki listeyle birebir aynı olmalı: seçim oraya parametre olarak taşınıyor.
+const INTERESTS = ["tarihi", "muze", "mimari", "manzara", "alisveris", "bahce"] as const;
 const HOURS = [2, 3, 4, 6] as const;
 
 /** "15:00" — saat dilimi sürprizi olmasın diye yerel saate çeviriyoruz. */
@@ -21,7 +22,7 @@ export default function Home() {
   // Hızlı başlangıç çubuğu: seçimler sihirbaza sorgu parametresi olarak taşınır.
   const [interest, setInterest] = useState<string>(INTERESTS[0]);
   const [hours, setHours] = useState<number>(3);
-  const [walking, setWalking] = useState(true);
+  const [wantsFood, setWantsFood] = useState(true);
 
   const [events, setEvents] = useState<EventItem[]>([]);
   const [places, setPlaces] = useState<Place[]>([]);
@@ -39,7 +40,7 @@ export default function Home() {
   }, []);
 
   const wizardHref =
-    `/sihirbaz?interest=${interest}&hours=${hours}` + `&mode=${walking ? "walk" : "transit"}`;
+    `/sihirbaz?interests=${interest}&hours=${hours}&food=${wantsFood ? 1 : 0}`;
 
   const cards = [
     { label: t("home_card_culture"), href: "/sihirbaz", from: "from-brand" },
@@ -90,7 +91,7 @@ export default function Home() {
             >
               {INTERESTS.map((i) => (
                 <option key={i} value={i}>
-                  {CATEGORY_LABEL[lang][i]}
+                  {INTEREST_LABEL[lang][i]}
                 </option>
               ))}
             </select>
@@ -112,14 +113,14 @@ export default function Home() {
           </label>
 
           <label className="block">
-            <span className="text-xs font-semibold text-muted">{t("home_quick_how")}</span>
+            <span className="text-xs font-semibold text-muted">{t("wizard_meal")}</span>
             <select
-              value={walking ? "walk" : "transit"}
-              onChange={(e) => setWalking(e.target.value === "walk")}
+              value={wantsFood ? "1" : "0"}
+              onChange={(e) => setWantsFood(e.target.value === "1")}
               className="mt-1 w-full rounded-lg border border-line bg-surface px-3 py-2 font-semibold"
             >
-              <option value="walk">{t("home_quick_walk")}</option>
-              <option value="transit">{t("home_quick_transit")}</option>
+              <option value="1">{t("wizard_meal_yes")}</option>
+              <option value="0">{t("wizard_meal_no")}</option>
             </select>
           </label>
 
