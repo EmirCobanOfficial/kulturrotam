@@ -23,7 +23,7 @@ alır. Uygulama canlıda çalışıyor; kalan iş demoyu sahneye hazırlamak ve 
 | Vercel deploy + `main`'e push ile otomatik yayın | ✅ çalışıyor |
 | TR/EN dil anahtarı | ✅ canlıda çalışıyor, veritabanı gerektirmiyor |
 | Kayıt / giriş (`/giris`) | ⚠️ kod hazır, "Confirm email" kapatıldı, **canlı test bekliyor** |
-| Fotoğraf akışı + etkinlik takvimi | ⛔ kod hazır, `roadmap.sql` çalıştırılmadı → kapalı |
+| Fotoğraf akışı + etkinlik takvimi | ✅ `roadmap.sql` çalıştırıldı, Akış linki açıldı — **canlı test bekliyor** |
 | QR kodlarının basılı hali | ⛔ canlı domainden yazdırılmadı |
 | Bağımlılık açığı (Dependabot) | ✅ incelendi, demoyu etkilemiyor, bilinçli bırakıldı |
 
@@ -48,12 +48,14 @@ akışı (kayıt, kupon) canlıda bir kez denemek.
   kutusu açma derdi kalktı. Akışın kendisi (kayıt → `/profil` yönlendirmesi → çıkış →
   tekrar giriş) canlıda hiç denenmedi. Demo provasına bunu da ekle.
 
-**Kodu yazıldı ama veritabanı göçü çalıştırılmadı, bu yüzden kapalı:**
+**Göçü çalıştırıldı, açıldı, ama canlıda hiç denenmedi:**
 - Topluluk fotoğraf akışı (`/akis`) ve belediye etkinlik takvimi.
-  `supabase/roadmap.sql` çalıştırılmadı (hackathonda zaman yetmedi, bilinçli karar).
-  Bu yüzden: header'daki "Akış" linki `SiteHeader.tsx` içinde yorum satırına alındı,
-  `/akis` adresine elle girilirse ham Postgres hatası yerine "henüz açık değil" mesajı
-  çıkar, rotada etkinlik rozeti görünmez. **Demo bundan etkilenmez, rota normal çizilir.**
+  `supabase/roadmap.sql` 11 Ekim'de Dashboard → SQL Editor üzerinden çalıştırıldı ve
+  doğrulandı: `events` / `photos` / `photo_votes` tabloları mevcut, `photos` bucket'ı 1,
+  `add_photo` + `vote_photo` fonksiyonları 2, seed etkinlik 3. Header'daki "Akış" linki
+  geri eklendi (`d1035bf`). **Henüz denenmeyen:** fotoğraf yükleme, oylama, rotadaki
+  etkinlik rozeti. Bunlar bozuksa demo yolu etkilenmez — sihirbaz, rota, QR ve kupon
+  ayrı akışlar.
 
 **Bilinen açık sorunlar:**
 - GitHub Dependabot yüksek seviye bağımlılık açığı bildiriyor:
@@ -78,14 +80,14 @@ akışı (kayıt, kupon) canlıda bir kez denemek.
 | Dosya | Neden önemli |
 |------|---------------|
 | `CLAUDE.md` | Projenin tek doğruluk kaynağı: durum, mimari kuralları, tuzaklar. `GEMINI.md` buna symlink. |
-| `supabase/roadmap.sql` | Çalıştırılmayı bekleyen göç: `events`, `photos`, `photo_votes` tabloları + `photos` storage bucket'ı. Ek olarak çalışır, veri silmez, tekrar çalıştırılabilir. |
+| `supabase/roadmap.sql` | **Çalıştırıldı (11 Ekim).** `events`, `photos`, `photo_votes` tabloları + `photos` bucket'ı. Idempotent; tekrar çalıştırılabilir, ama 125. satır kendi seed etkinliklerini silip yeniden ekler. |
 | `supabase/schema.sql` | Ana şema + `security definer` fonksiyonları (`check_in`, `redeem_coupon`, `set_nickname`). |
 | `src/lib/supabase/client.ts` | Oturum yönetimi: `ensureSession`, `signUp`, `signIn`, `signOut`, `accountState`. |
 | `src/app/giris/page.tsx` | Kayıt/giriş formu, iki sekmeli. |
 | `src/lib/i18n.ts` | Tüm arayüz metinleri. Bileşene düz string gömme, buraya ekle. |
 | `src/lib/errors.ts` | `errorText()` — Supabase hatalarını okunur mesaja çevirir. |
 | `src/lib/route/plan.ts` | Rota motoru, saf fonksiyon. Değiştirirsen `plan.test.ts`'i güncelle. |
-| `src/components/SiteHeader.tsx` | Akış linki burada yorum satırında; göç çalışınca geri ekle. |
+| `src/components/SiteHeader.tsx` | Akış linki `d1035bf` ile geri eklendi. |
 | `src/app/admin/qr/page.tsx` | QR yazdırma. QR değerleri `window.location.origin` kullanır. |
 
 ## Denenip Yanlış Çıkan Şeyler
@@ -109,13 +111,7 @@ akışı (kayıt, kupon) canlıda bir kez denemek.
 
 2. ~~**Supabase'de e-posta doğrulamasını kapat.**~~ ✅ **Yapıldı** (11 Ekim): Dashboard → Authentication → Sign In / Providers → Email → "Confirm email" kapatıldı. **Kalan iş:** `/giris` sayfasında kayıt → `/profil`'e yönlenme → çıkış → tekrar giriş akışını canlıda bir kez dene. **Bu akış hiç test edilmedi.**
 
-3. **`supabase/roadmap.sql`'i çalıştır.** Supabase Dashboard → SQL Editor → dosyayı yapıştır → Run. Dosya denetlendi (11 Ekim): 149 satır, **tamamı ASCII** — Türkçe karakter hiç yok, yani panodan yapıştırınca bozulma riski sıfır. Ayrıca tam idempotent (`if not exists`, `drop policy if exists`, `create or replace`, `on conflict`); tekrar çalıştırmak veri silmez. **Bunu bir yapay zekâ oturumu senin yerine yapamaz:** veritabanı şifresi repoda değil, Dashboard erişimi gerekiyor. Sonra `src/components/SiteHeader.tsx` içindeki yorum satırının yerine Akış linkini geri ekle:
-   ```tsx
-   <Link className="rounded-full px-3 py-1.5 hover:bg-brand-soft" href="/akis">
-     {t("nav_feed")}
-   </Link>
-   ```
-   Ardından `/akis`'te fotoğraf yükleme ve oylamayı, rotada etkinlik rozetini dene. Hiçbiri canlıda test edilmedi.
+3. ~~**`supabase/roadmap.sql`'i çalıştır.**~~ ✅ **Yapıldı** (11 Ekim). Dashboard → SQL Editor'den çalıştırıldı, "Success. No rows returned" döndü ve doğrulandı (3 tablo / 1 bucket / 2 fonksiyon / 3 etkinlik). Akış linki `SiteHeader.tsx`'e geri eklendi (`d1035bf`). **Kalan iş:** `/akis`'te fotoğraf yükleme ve oylamayı, rotada etkinlik rozetini canlıda dene. Hiçbiri test edilmedi.
 
 4. **Demo provası yap:** sihirbaz → rota → QR okut → puan → aynı QR tekrar → puan vermiyor → `/oduller`'de kupon al. Kupon alma akışı production'da test edilmedi (puan harcadığı için denenmedi).
 

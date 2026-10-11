@@ -19,15 +19,16 @@ Supabase projesi `ooyjctgdfkexjybiqjti` kurulu: şema + seed yüklü, anonymous 
 
 **Canlı: https://kulturrotam.vercel.app** (Vercel projesi `emir-coban-official/kulturrotam`, `main` dalına her push otomatik deploy olur). Üç `NEXT_PUBLIC_*` değişkeni Production ve Preview için girili. Production'da doğrulandı: sihirbaz rota üretiyor, check-in puan veriyor, ikinci tarama puan vermiyor, demo modu etiketi görünüyor.
 
-**`supabase/roadmap.sql` henüz çalıştırılmadı** (hackathon zamanı yetmedi). İçinde `events`, `photos`, `photo_votes` tabloları ve `photos` storage bucket'ı var; schema.sql'e ek olarak çalışır, mevcut veriyi silmez, tekrar çalıştırılabilir.
+**`supabase/roadmap.sql` çalıştırıldı** (11 Ekim, Dashboard → SQL Editor). `events`, `photos`, `photo_votes` tabloları, `photos` storage bucket'ı, RLS politikaları ve `add_photo()` / `vote_photo()` fonksiyonları artık veritabanında. Doğrulandı: üç tablo mevcut, bucket 1, fonksiyon 2, etkinlik 3. Header'daki Akış linki geri eklendi (`d1035bf`).
 
-Çalıştırılana kadar: kod hazır ama veri yok. `/akis` "henüz açık değil" mesajı gösterir ve header'daki Akış linki gizlidir (`SiteHeader.tsx`'te yorum satırı — SQL çalışınca geri ekle). Rotada etkinlik rozeti çıkmaz; rota normal çizilir, demo etkilenmez.
+Dosya idempotent, tekrar çalıştırılabilir. Tek uyarı: 125. satır `delete from public.events where source = 'belediye'` yapar — kendi seed'ini silip yeniden ekler. Puan, rozet, mekan ve kullanıcı verisine dokunmaz. Etkinlik tarihleri `current_date` üzerinden üretildiği için demo hangi gün olursa olsun o güne düşer; tekrar çalıştırmaya gerek yok.
+
+**Canlıda henüz denenmedi:** `/akis`'te fotoğraf yükleme ve oylama, rotadaki etkinlik rozeti.
 
 **Kalan iş (hepsi operasyon, kod değil — ayrıntısı `HANDOFF.md`'de):**
 
 1. **QR kodlarını yazdır.** `/admin/qr` sayfasını **canlı domainden** aç ve yazdır — QR değerleri `window.location.origin` ile üretilir; yerelden yazdırılan kodlar `localhost`, Vercel preview dalından yazdırılanlar ise dal silinince ölen bir adres gösterir.
-2. **`supabase/roadmap.sql`'i çalıştır** (Dashboard → SQL Editor). Dosya ASCII ve idempotent, yapıştırmak güvenli. Sonra `SiteHeader.tsx`'teki Akış linkini geri ekle.
-3. **Canlıda bir kez dene:** `/giris` kayıt→çıkış→giriş akışı ve `/oduller` kupon alma. İkisi de hiç test edilmedi.
+2. **Canlıda bir kez dene:** `/giris` kayıt→çıkış→giriş, `/oduller` kupon alma, `/akis` fotoğraf yükleme ve oylama, rotada etkinlik rozeti. Hiçbiri canlıda test edilmedi.
 
 ## Mimari kuralları
 
