@@ -23,12 +23,14 @@ Supabase projesi `ooyjctgdfkexjybiqjti` kurulu: şema + seed yüklü, anonymous 
 
 Dosya idempotent, tekrar çalıştırılabilir. Tek uyarı: 125. satır `delete from public.events where source = 'belediye'` yapar — kendi seed'ini silip yeniden ekler. Puan, rozet, mekan ve kullanıcı verisine dokunmaz. Etkinlik tarihleri `current_date` üzerinden üretildiği için demo hangi gün olursa olsun o güne düşer; tekrar çalıştırmaya gerek yok.
 
-**Canlıda henüz denenmedi:** `/akis`'te fotoğraf yükleme ve oylama, rotadaki etkinlik rozeti.
+**11 Ekim'de canlıda doğrulandı:** `/akis` fotoğraf yükleme ve oylama (tek oy kuralı dahil), QR check-in'in ikinci taramada puan vermemesi, kayıt → e-posta doğrulama → giriş akışı.
+
+**Canlıda hâlâ denenmedi:** `/oduller` kupon alma, rotadaki etkinlik rozeti.
 
 **Kalan iş (hepsi operasyon, kod değil — ayrıntısı `HANDOFF.md`'de):**
 
 1. **QR kodlarını yazdır.** `/admin/qr` sayfasını **canlı domainden** aç ve yazdır — QR değerleri `window.location.origin` ile üretilir; yerelden yazdırılan kodlar `localhost`, Vercel preview dalından yazdırılanlar ise dal silinince ölen bir adres gösterir.
-2. **Canlıda bir kez dene:** `/giris` kayıt→çıkış→giriş, `/oduller` kupon alma, `/akis` fotoğraf yükleme ve oylama, rotada etkinlik rozeti. Hiçbiri canlıda test edilmedi.
+2. **Canlıda bir kez dene:** `/oduller` kupon alma ve rotada etkinlik rozeti. İkisi de hiç test edilmedi.
 
 ## Mimari kuralları
 
@@ -45,7 +47,11 @@ Dosya idempotent, tekrar çalıştırılabilir. Tek uyarı: 125. satır `delete 
 
 - **Türkçe karakterler Supabase SQL editörüne panodan yapıştırılırsa bozulur** (Chrome→Monaco encoding; "Müzesi" → "M√ºzesi"). Elle yapıştıracaksan önce ASCII'ye çevir: her non-ASCII karakteri `'||chr(<kod>)||'` ile değiştir. `psql` veya Supabase CLI kullanırsan sorun yok.
 - `.env.local` git'te yok. Yoksa `cp .env.local.example .env.local` ve Dashboard → Connect'ten doldur.
-- **Supabase'de e-posta doğrulaması açıksa** kayıt sonrası oturum gelmez; kullanıcı posta kutusuna erişemediği demoda giriş yapamaz. Dashboard → Authentication → Sign In / Providers → Email → "Confirm email" kapalı olmalı — **11 Ekim'de kapatıldı**, ama `/giris` akışı canlıda hâlâ denenmedi. Kod iki durumu da yönetir: doğrulama gerekiyorsa ekranda bilgilendirme çıkar.
+- **Email provider sayfasında iki ayrı anahtar var, karıştırma.** Dashboard → Authentication → Sign In / Providers → Email:
+  - **"Enable Email provider" AÇIK kalmalı.** Kapatılırsa `signInWithPassword` 422 ile `"Email logins are disabled"` döner. Sinsi tarafı: **kayıt yine çalışıyor gibi görünür**, çünkü anonim kullanıcıyı kalıcıya çeviren yol `updateUser()` kullanır ve bu anahtara bakmaz. Yani "kayıt oluyorum ama giriş yapamıyorum" tablosunu görürsen sebep budur. 11 Ekim'de bir kez bu şekilde kapatıldı ve giriş kırıldı.
+  - **"Confirm email"** doğrulama mailini yönetir. Şu an **açık** ve çalışıyor; akış canlıda test edildi.
+- **Anonim kullanıcıyı kalıcıya çevirmek Supabase için bir "e-posta değişikliği"dir**, kayıt değil. Gelen mailin tipi `type=email_change` olur ve bu **"Confirm email" anahtarından etkilenmez**. Doğrulama mailini tamamen kaldırmaya çalışıyorsan yanlış anahtarla uğraşma.
+- **Doğrulama mailindeki link Site URL'e gider.** `emailRedirectTo` verilmezse Supabase projenin Site URL'ini kullanır; varsayılan `localhost:3000` olduğu için canlıda kaydolan kullanıcı tıklayınca `ERR_CONNECTION_REFUSED` alır. Kod artık her iki kayıt yolunda da `window.location.origin + "/profil"` gönderiyor (`src/lib/supabase/client.ts`), **ama Supabase yalnızca Authentication → URL Configuration → Redirect URLs listesindeki adresleri kabul eder.** Yeni bir domain eklersen oraya da ekle.
 - Leaflet SSR'da patlar; harita bileşeni `dynamic(..., { ssr: false })` ile yüklenmeli.
 - `NEXT_PUBLIC_DEMO_SKIP_GEOFENCE=true` iken check-in konum kontrolünü atlar ve ekranda "demo modu" etiketi gösterir. Jüri salonunda mekana 300 m yakın olunamayacağı için demoda açık kalmalı; etiketi gizleme, jüriye açıkça söyle.
 

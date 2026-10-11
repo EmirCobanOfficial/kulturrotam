@@ -22,7 +22,7 @@ alır. Uygulama canlıda çalışıyor; kalan iş demoyu sahneye hazırlamak ve 
 | Çekirdek demo akışı (sihirbaz → rota → QR → puan → kupon) | ✅ yazıldı, canlıda doğrulandı (kupon alma hariç) |
 | Vercel deploy + `main`'e push ile otomatik yayın | ✅ çalışıyor |
 | TR/EN dil anahtarı | ✅ canlıda çalışıyor, veritabanı gerektirmiyor |
-| Kayıt / giriş (`/giris`) | ⚠️ kod hazır, "Confirm email" kapatıldı, **canlı test bekliyor** |
+| Kayıt / giriş (`/giris`) | ✅ canlıda doğrulandı: kayıt, e-posta doğrulama, çıkış, tekrar giriş |
 | Fotoğraf akışı + etkinlik takvimi | ✅ `roadmap.sql` çalıştırıldı, Akış linki açıldı — **canlı test bekliyor** |
 | QR kodlarının basılı hali | ⛔ canlı domainden yazdırılmadı |
 | Bağımlılık açığı (Dependabot) | ✅ incelendi, demoyu etkilemiyor, bilinçli bırakıldı |
@@ -42,8 +42,13 @@ akışı (kayıt, kupon) canlıda bir kez denemek.
 - `NEXT_PUBLIC_DEMO_SKIP_GEOFENCE=true` etkin, "Demo modu" etiketi görünüyor
 - TR/EN dil anahtarı (header) — veritabanı değişikliği gerektirmez, hemen çalışır
 
-**Engeli kalktı, ama canlıda hâlâ test edilmedi:**
-- Kayıt / giriş (`/giris`). Supabase'de **"Confirm email" kapatıldı** (11 Ekim, takım
+**Canlıda doğrulandı (11 Ekim):**
+- Kayıt / giriş (`/giris`). Doğrulama maili **açık** ve çalışıyor. İki düzeltme gerekti:
+  Site URL / Redirect URLs canlı domaine çekildi ve kod artık `emailRedirectTo` olarak
+  sayfanın kendi origin'ini gönderiyor (`280b4da`) — öncesinde mail linki
+  `localhost:3000`'e gidip `ERR_CONNECTION_REFUSED` veriyordu. Ayrıca Email provider'ın
+  ana anahtarı bir ara kapandığı için giriş `"Email logins are disabled"` (422) döndü;
+  açılınca düzeldi. Eski not: Supabase'de **"Confirm email" kapatıldı** (11 Ekim, takım
   bildirdi), yani kayıt sonrası oturum artık doğrudan açılmalı — jüri önünde posta
   kutusu açma derdi kalktı. Akışın kendisi (kayıt → `/profil` yönlendirmesi → çıkış →
   tekrar giriş) canlıda hiç denenmedi. Demo provasına bunu da ekle.
@@ -109,7 +114,7 @@ akışı (kayıt, kupon) canlıda bir kez denemek.
 
 1. **QR kodlarını yazdır.** Tarayıcıda https://kulturrotam.vercel.app/admin/qr aç, sağ üstteki "Yazdır"a bas. QR'lar sayfanın açıldığı adresi gömer; yerelden (`localhost:3000`) yazdırılan kodlar demoda çalışmaz.
 
-2. ~~**Supabase'de e-posta doğrulamasını kapat.**~~ ✅ **Yapıldı** (11 Ekim): Dashboard → Authentication → Sign In / Providers → Email → "Confirm email" kapatıldı. **Kalan iş:** `/giris` sayfasında kayıt → `/profil`'e yönlenme → çıkış → tekrar giriş akışını canlıda bir kez dene. **Bu akış hiç test edilmedi.**
+2. ~~**Kayıt / giriş akışını canlıda dene.**~~ ✅ **Yapıldı** (11 Ekim). Kayıt, e-posta doğrulama, çıkış ve tekrar giriş canlıda çalışıyor. Email provider'ın ana anahtarı AÇIK kalmalı — kapalıyken kayıt çalışır ama giriş 422 `"Email logins are disabled"` döner (ayrıntı `CLAUDE.md` → Bilinen tuzaklar). **Tek doğrulanmayan:** giriş sonrası puanların korunduğu gözle teyit edilmedi; provada header'daki puan rozetine bak.
 
 3. ~~**`supabase/roadmap.sql`'i çalıştır.**~~ ✅ **Yapıldı** (11 Ekim). Dashboard → SQL Editor'den çalıştırıldı, "Success. No rows returned" döndü ve doğrulandı (3 tablo / 1 bucket / 2 fonksiyon / 3 etkinlik). Akış linki `SiteHeader.tsx`'e geri eklendi (`d1035bf`). **Kalan iş:** `/akis`'te fotoğraf yükleme ve oylamayı, rotada etkinlik rozetini canlıda dene. Hiçbiri test edilmedi.
 
