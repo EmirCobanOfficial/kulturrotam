@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import ProblemCards from "@/components/ProblemCards";
 import Reveal from "@/components/Reveal";
 import { fetchPlaces, fetchTodayEvents } from "@/lib/data";
 import { INTEREST_LABEL, eventTitle, placeName, useLang } from "@/lib/i18n";
@@ -184,6 +185,8 @@ export default function Home() {
           </div>
         )}
       </section>
+
+      <ProblemCards />
 
       {/* ------------------------------------------------- bireysel mi geziyorsun */}
       <Reveal>

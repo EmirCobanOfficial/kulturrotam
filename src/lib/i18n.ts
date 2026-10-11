@@ -112,6 +112,19 @@ const DICT = {
     about_closing: "Bursa bizim ilk uygulama bölgemiz. Burada edindiğimiz deneyimi, zamanla Türkiye'nin farklı şehirlerine taşımayı hedefliyoruz.",
     about_first_stop: "İlk durağımız Bursa.",
 
+    home_problem_title: "Neyi çözüyoruz?",
+    home_problem_hint: "Nasıl çözdüğümüzü gör",
+    home_problem_close: "Kapat",
+    prob1_t: "Nereden başlayacağını bilmiyorsun",
+    prob1_b: "Şehre ilk kez gelen turist ve öğrenciler, hangi mekanın hangi saatte gezilmesi gerektiğini bilmediği için zamanını kaybediyor.",
+    prob1_a: "Sihirbaz süreni, başlangıç saatini ve ilgi alanını sorar; yalnızca o saatte açık olan mekanlardan yürüme mesafesine göre sıralı bir gün planı çıkarır.",
+    prob2_t: "Rotalar herkese aynı",
+    prob2_b: "Mevcut haritalar tek tip liste veriyor; ilgi alanı, bütçe ve elindeki süre hesaba katılmıyor.",
+    prob2_a: "Rota motoru ilgi alanı ve bütçeye göre puanlayıp sıralar. Öğle veya akşam saatine denk gelirse rotaya en yakın yemek molasını kendisi ekler, o gün etkinliği olan mekanı öne alır.",
+    prob3_t: "Turist ile esnaf kopuk",
+    prob3_b: "Ziyaretçiyi yerel esnafa ve belediye tesislerine yönlendiren bir teşvik yok.",
+    prob3_a: "Her durakta QR okutunca puan kazanırsın. Puan, belediye sosyal tesislerinde ve anlaşmalı yerel esnafta geçerli kupona dönüşür; dilersen bağışa çevirirsin.",
+
   },
   en: {
     nav_route: "Route",
@@ -215,6 +228,19 @@ const DICT = {
     about_s3_body: "Our aim is to make it easier for more people to take part in cultural life. We are building a social enterprise that sustains that aim through transparent partnerships with local businesses.",
     about_closing: "Bursa is our first region. In time we aim to carry what we learn here to other cities in Turkiye.",
     about_first_stop: "Our first stop is Bursa.",
+
+    home_problem_title: "What we solve",
+    home_problem_hint: "See how we solve it",
+    home_problem_close: "Close",
+    prob1_t: "You do not know where to start",
+    prob1_b: "Tourists and students arriving for the first time lose time because they cannot tell which place is worth seeing at which hour.",
+    prob1_a: "The wizard asks for your time, your starting hour and your interests, then lays out a day in walking order from the places that are actually open at that hour.",
+    prob2_t: "Every route is the same",
+    prob2_b: "Existing maps hand out one flat list; interests, budget and the time you actually have are not taken into account.",
+    prob2_a: "The route engine scores and orders places by interest and budget. If your day runs through lunch or dinner it adds the nearest meal stop itself, and it moves a place with an event that day to the front.",
+    prob3_t: "Visitors and local traders are disconnected",
+    prob3_b: "Nothing steers a visitor towards local traders and municipal venues.",
+    prob3_a: "Scanning the QR at each stop earns you points. Points turn into coupons valid at municipal venues and partner traders — or into a donation, if you would rather give them.",
 
   },
 } as const;
