@@ -38,8 +38,17 @@ alır. Uygulama canlıda çalışıyor; kalan iş demoyu sahneye hazırlamak ve 
   çıkar, rotada etkinlik rozeti görünmez. **Demo bundan etkilenmez, rota normal çizilir.**
 
 **Bilinen açık sorunlar:**
-- GitHub Dependabot 1 yüksek seviye bağımlılık açığı bildiriyor:
-  https://github.com/EmirCobanOfficial/kulturrotam/security/dependabot/1 — incelenmedi.
+- GitHub Dependabot yüksek seviye bağımlılık açığı bildiriyor:
+  https://github.com/EmirCobanOfficial/kulturrotam/security/dependabot/1
+  **İncelendi, bilinçli olarak bırakıldı.** `npm audit` 5 high gösteriyor; hepsi tek bir
+  zincir: `braces` → `micromatch` → `fast-glob` → `@next/eslint-plugin-next` →
+  `eslint-config-next`. Bu paket `devDependencies` altında, yani yalnızca `npm run lint`
+  çalışırken yüklenir — tarayıcıya giden pakete ve Vercel runtime'ına girmez, demoyu
+  etkilemez. Açık da zaten "deeply nested glob pattern ile DoS", yani lint'e kasten kötü
+  desen verebilen birini gerektirir. `npm audit fix --force` tek çözüm olarak
+  `eslint-config-next`'i 16.4.0'dan 14.2.35'e düşürüyor; Next 16.4.0 ile sürüm uyumsuzluğu
+  çıkarıp lint yapılandırmasını bozma riski, kazanımdan büyük. Demodan sonra
+  `eslint-config-next` yukarı sürüme alınarak kapatılmalı.
 - Şifre sıfırlama akışı yok. Şifresini unutan kullanıcı hesabına erişemez.
 - `/akis` fotoğrafları herkese açık bucket'ta, moderasyon yok.
 - `npm run lint` birkaç `setState in effect` hatası veriyor. Bunlar projede baştan beri
