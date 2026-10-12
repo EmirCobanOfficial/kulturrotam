@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import ProblemCards from "@/components/ProblemCards";
@@ -10,13 +11,23 @@ import { INTEREST_LABEL, eventTitle, placeName, useLang } from "@/lib/i18n";
 import type { EventItem, Place } from "@/lib/types";
 
 // Sihirbazdaki listeyle birebir aynı olmalı: seçim oraya parametre olarak taşınıyor.
-const INTERESTS = ["tarihi", "muze", "mimari", "manzara", "alisveris", "bahce"] as const;
+const INTERESTS = [
+  "tarihi",
+  "muze",
+  "mimari",
+  "manzara",
+  "alisveris",
+  "bahce",
+] as const;
 /** Önümüzdeki iki hafta: "haftaya çarşamba oradayım" sorusu bu aralığa düşer. */
 const DAYS = 14;
 
 /** "15:00" — saat dilimi sürprizi olmasın diye yerel saate çeviriyoruz. */
 function clock(iso: string): string {
-  return new Date(iso).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+  return new Date(iso).toLocaleTimeString([], {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
 }
 
 export default function Home() {
@@ -34,7 +45,9 @@ export default function Home() {
   const selectedDay = days[dayIndex] ?? days[0];
 
   useEffect(() => {
-    fetchPlaces().then(setPlaces).catch(() => setPlaces([]));
+    fetchPlaces()
+      .then(setPlaces)
+      .catch(() => setPlaces([]));
   }, []);
 
   useEffect(() => {
@@ -59,42 +72,71 @@ export default function Home() {
     { label: t("home_card_events"), href: "/akis", from: "from-brand" },
   ];
 
-  const partners = ["Bursa Kart", "TEMA Vakfı", "Osmangazi Belediyesi", "Yerel esnaf"];
+  const partners = [
+    "Bursa Kart",
+    "TEMA Vakfı",
+    "Osmangazi Belediyesi",
+    "Yerel esnaf",
+  ];
 
   return (
     <div className="mx-auto max-w-5xl px-4">
       {/* ---------------------------------------------------------------- hero */}
-      <section className="relative py-14 sm:py-20">
-        <Reveal>
-          <span className="mb-4 inline-flex items-center gap-2 rounded-full bg-brand px-4 py-1.5 text-sm font-semibold text-white">
-            <span aria-hidden>●</span>
-            {t("home_hero_badge")}
-          </span>
-          <h1 className="max-w-3xl text-4xl font-bold leading-tight sm:text-6xl">
-            {t("home_hero_title_1")}
-            <br />
-            <span className="text-brand">{t("home_hero_title_2")}</span>
-          </h1>
-          <p className="mt-5 max-w-2xl text-lg text-muted">{t("home_hero_lead")}</p>
-          <div className="mt-8 flex flex-wrap items-center gap-4">
-            <Link
-              href="/sihirbaz"
-              className="rounded-full bg-accent px-7 py-3 font-semibold text-white hover:opacity-90"
-            >
-              {t("home_hero_cta")} →
-            </Link>
-            <Link href="/akis" className="font-semibold underline underline-offset-4">
-              {t("home_hero_secondary")} →
-            </Link>
-          </div>
-        </Reveal>
+      <section className="relative mt-6 overflow-hidden rounded-3xl">
+        <Image
+          src="/gorsel/hero.jpg"
+          alt=""
+          fill
+          priority
+          sizes="(max-width: 1024px) 100vw, 1024px"
+          className="object-cover"
+        />
+        {/*
+          Metin fotoğrafın üstünde duruyor; perde olmadan okunmuyor.
+          Telefonda yazı tüm genişliği kapladığı için düz bir perde,
+          geniş ekranda soldan sağa açılan bir geçiş: yazı kremin üstünde
+          kalırken fotoğraf sağda görünür.
+        */}
+        <div className="absolute inset-0 bg-background/90 sm:bg-gradient-to-r sm:from-background sm:via-background/92 sm:to-background/10" />
+        <div className="relative px-6 py-14 sm:px-10 sm:py-20">
+          <Reveal>
+            <span className="mb-4 inline-flex items-center gap-2 rounded-full bg-brand px-4 py-1.5 text-sm font-semibold text-white">
+              <span aria-hidden>●</span>
+              {t("home_hero_badge")}
+            </span>
+            <h1 className="max-w-3xl text-4xl font-bold leading-tight sm:text-6xl">
+              {t("home_hero_title_1")}
+              <br />
+              <span className="text-brand">{t("home_hero_title_2")}</span>
+            </h1>
+            <p className="mt-5 max-w-2xl text-lg text-muted">
+              {t("home_hero_lead")}
+            </p>
+            <div className="mt-8 flex flex-wrap items-center gap-4">
+              <Link
+                href="/sihirbaz"
+                className="rounded-full bg-accent px-7 py-3 font-semibold text-white hover:opacity-90"
+              >
+                {t("home_hero_cta")} →
+              </Link>
+              <Link
+                href="/akis"
+                className="font-semibold underline underline-offset-4"
+              >
+                {t("home_hero_secondary")} →
+              </Link>
+            </div>
+          </Reveal>
+        </div>
       </section>
 
       {/* ------------------------------------------------- hızlı başlangıç çubuğu */}
       <Reveal>
         <div className="grid gap-3 rounded-2xl border border-line bg-surface p-4 shadow-sm sm:grid-cols-2 lg:grid-cols-[1fr_1fr_1fr_auto]">
           <label className="block">
-            <span className="text-xs font-semibold text-muted">{t("home_quick_date")}</span>
+            <span className="text-xs font-semibold text-muted">
+              {t("home_quick_date")}
+            </span>
             <select
               value={dayIndex}
               onChange={(e) => setDayIndex(Number(e.target.value))}
@@ -109,7 +151,9 @@ export default function Home() {
           </label>
 
           <label className="block">
-            <span className="text-xs font-semibold text-muted">{t("home_quick_what")}</span>
+            <span className="text-xs font-semibold text-muted">
+              {t("home_quick_what")}
+            </span>
             <select
               value={interest}
               onChange={(e) => setInterest(e.target.value)}
@@ -124,7 +168,9 @@ export default function Home() {
           </label>
 
           <label className="block">
-            <span className="text-xs font-semibold text-muted">{t("wizard_meal")}</span>
+            <span className="text-xs font-semibold text-muted">
+              {t("wizard_meal")}
+            </span>
             <select
               value={wantsFood ? "1" : "0"}
               onChange={(e) => setWantsFood(e.target.value === "1")}
@@ -156,7 +202,9 @@ export default function Home() {
                 href={c.href}
                 className={`flex h-44 items-end rounded-xl bg-gradient-to-br ${c.from} to-brand-soft p-5 transition-transform hover:-translate-y-1`}
               >
-                <span className="text-lg font-bold text-white drop-shadow">{c.label} →</span>
+                <span className="text-lg font-bold text-white drop-shadow">
+                  {c.label} →
+                </span>
               </Link>
             </Reveal>
           ))}
@@ -188,9 +236,13 @@ export default function Home() {
                     <p className="text-sm font-semibold text-accent">
                       {clock(e.starts_at)} – {clock(e.ends_at)}
                     </p>
-                    <h3 className="mt-2 font-semibold">{eventTitle(e, lang)}</h3>
+                    <h3 className="mt-2 font-semibold">
+                      {eventTitle(e, lang)}
+                    </h3>
                     {place && (
-                      <p className="mt-1 text-sm text-muted">{placeName(place, lang)}</p>
+                      <p className="mt-1 text-sm text-muted">
+                        {placeName(place, lang)}
+                      </p>
                     )}
                   </div>
                 </Reveal>
@@ -205,7 +257,9 @@ export default function Home() {
       {/* ------------------------------------------------- bireysel mi geziyorsun */}
       <Reveal>
         <section className="my-4 rounded-2xl bg-brand px-6 py-10 text-white sm:px-10">
-          <h2 className="max-w-2xl text-2xl font-bold sm:text-3xl">{t("home_solo_title")}</h2>
+          <h2 className="max-w-2xl text-2xl font-bold sm:text-3xl">
+            {t("home_solo_title")}
+          </h2>
           <p className="mt-4 max-w-2xl text-white/80">{t("home_solo_body")}</p>
           <Link
             href="/kendi-rotam"
@@ -237,7 +291,9 @@ export default function Home() {
       {/* ------------------------------------------------ iş birlikleri, sponsorlar */}
       <section className="border-t border-line py-14">
         <Reveal>
-          <h2 className="text-2xl font-bold sm:text-3xl">{t("home_partners_title")}</h2>
+          <h2 className="text-2xl font-bold sm:text-3xl">
+            {t("home_partners_title")}
+          </h2>
           <p className="mt-3 max-w-2xl text-muted">{t("home_partners_lead")}</p>
         </Reveal>
         <div className="mt-6 grid gap-4 sm:grid-cols-4">
