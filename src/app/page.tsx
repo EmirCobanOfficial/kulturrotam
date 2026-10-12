@@ -75,8 +75,18 @@ export default function Home() {
       from: "from-brand",
       image: "/gorsel/kart-kultur.jpg",
     },
-    { label: t("home_card_food"), href: "/sihirbaz", from: "from-accent", image: null },
-    { label: t("home_card_events"), href: "/akis", from: "from-brand", image: null },
+    {
+      label: t("home_card_food"),
+      href: "/sihirbaz",
+      from: "from-accent",
+      image: "/gorsel/kart-lezzet.webp",
+    },
+    {
+      label: t("home_card_events"),
+      href: "/etkinlikler",
+      from: "from-brand",
+      image: "/gorsel/etkinlik-muzede-bir-gece.jpg",
+    },
   ];
 
   const partners = [
