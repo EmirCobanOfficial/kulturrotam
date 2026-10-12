@@ -8,7 +8,7 @@ import { ensureSession, supabaseConfigured } from "@/lib/supabase/client";
 
 const SKIP_GEOFENCE = process.env.NEXT_PUBLIC_DEMO_SKIP_GEOFENCE === "true";
 
-type Phase = "idle" | "locating" | "sending" | "done" | "error";
+type Phase = "idle" | "ready" | "locating" | "sending" | "done" | "error";
 
 export default function CheckInClient({ token }: { token: string }) {
   const [phase, setPhase] = useState<Phase>("idle");
@@ -25,7 +25,11 @@ export default function CheckInClient({ token }: { token: string }) {
       setMessage("Supabase ayarlı değil (.env.local eksik).");
       return;
     }
-    run();
+    // Konum iznini sayfa açılır açılmaz istemiyoruz. iOS Safari, kullanıcı
+    // dokunmadan yapılan getCurrentPosition çağrılarında izin kutusunu
+    // güvenilir biçimde göstermiyor; telefonda QR okutan kişi de ne olduğunu
+    // anlamadan izin kutusuyla karşılaşmasın. Tek dokunuşla başlatıyoruz.
+    setPhase("ready");
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -48,10 +52,8 @@ export default function CheckInClient({ token }: { token: string }) {
         setPhase("locating");
         try {
           coords = await getCoords();
-        } catch {
-          throw new Error(
-            "Konum alınamadı. Tarayıcıda konum iznini ver ve tekrar dene.",
-          );
+        } catch (err) {
+          throw new Error(geoMessage(err));
         }
       }
 
@@ -70,6 +72,23 @@ export default function CheckInClient({ token }: { token: string }) {
       {phase === "locating" && <Info>Konumun alınıyor…</Info>}
       {phase === "sending" && <Info>Check-in yapılıyor…</Info>}
       {phase === "idle" && <Info>Başlatılıyor…</Info>}
+
+      {phase === "ready" && (
+        <div className="rounded-xl border border-line bg-surface p-6">
+          <p className="text-4xl">📍</p>
+          <h1 className="mt-3 text-xl font-bold">Buradasın!</h1>
+          <p className="mt-2 text-sm text-muted">
+            Puanı alabilmek için konumunu doğrulamamız gerekiyor. Butona basınca
+            telefonun konum izni soracak.
+          </p>
+          <button
+            onClick={run}
+            className="mt-5 w-full rounded-full bg-brand px-6 py-3 text-lg font-semibold text-white"
+          >
+            Check-in yap
+          </button>
+        </div>
+      )}
 
       {phase === "error" && (
         <div className="rounded-xl border border-accent/40 bg-accent-soft p-6">
@@ -144,12 +163,26 @@ function Info({ children }: { children: React.ReactNode }) {
   return <p className="animate-pulse text-muted">{children}</p>;
 }
 
+/** Tarayıcının konum hatasını kullanıcının yapabileceği bir şeye çevirir. */
+function geoMessage(err: unknown): string {
+  const code = (err as GeolocationPositionError | undefined)?.code;
+  if (code === 1) {
+    return "Konum izni verilmedi. Tarayıcı ayarlarından bu siteye konum izni ver ve tekrar dene.";
+  }
+  if (code === 3) {
+    return "Konum zamanında alınamadı. Açık alana çık, konum servisini aç ve tekrar dene.";
+  }
+  return "Konum alınamadı. Telefonun konum servisi kapalı olabilir.";
+}
+
 function getCoords(): Promise<{ lat: number; lng: number }> {
   return new Promise((resolve, reject) => {
     navigator.geolocation.getCurrentPosition(
       (pos) => resolve({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
       reject,
-      { enableHighAccuracy: true, timeout: 8000 },
+      // Telefonda GPS soğuk başlangıcı 8 sn'yi rahat aşıyor; son bir dakikalık
+      // konum da bu iş için yeterince taze.
+      { enableHighAccuracy: true, timeout: 20000, maximumAge: 60000 },
     );
   });
 }
