@@ -16,21 +16,27 @@ export default function SiteHeader() {
         <Link href="/" className="font-bold text-brand text-lg">
           Kültür<span className="text-accent">Rotam</span>
         </Link>
-        <nav className="ml-auto flex items-center gap-1 text-sm">
+        <nav className="ml-auto flex flex-wrap items-center gap-1 text-sm">
+          <Link className="rounded-full px-3 py-1.5 hover:bg-brand-soft" href="/hakkimizda">
+            {t("nav_about")}
+          </Link>
+          <Link className="rounded-full px-3 py-1.5 hover:bg-brand-soft" href="/bursayla-ilk-bulusma">
+            {t("nav_social")}
+          </Link>
           <Link className="rounded-full px-3 py-1.5 hover:bg-brand-soft" href="/sihirbaz">
-            {t("nav_route")}
+            {t("nav_route_build")}
           </Link>
           <Link className="rounded-full px-3 py-1.5 hover:bg-brand-soft" href="/kendi-rotam">
             {t("nav_custom")}
           </Link>
-          <Link className="rounded-full px-3 py-1.5 hover:bg-brand-soft" href="/akis">
-            {t("nav_feed")}
-          </Link>
-          <Link className="rounded-full px-3 py-1.5 hover:bg-brand-soft" href="/hakkimizda">
-            {t("nav_about")}
-          </Link>
           <Link className="rounded-full px-3 py-1.5 hover:bg-brand-soft" href="/oduller">
             {t("nav_rewards")}
+          </Link>
+          <Link className="rounded-full px-3 py-1.5 hover:bg-brand-soft" href="/etkinlikler">
+            {t("nav_events")}
+          </Link>
+          <Link className="rounded-full px-3 py-1.5 hover:bg-brand-soft" href="/akis">
+            {t("nav_feed")}
           </Link>
           <Link className="rounded-full px-3 py-1.5 hover:bg-brand-soft" href="/profil">
             {t("nav_profile")}

@@ -202,6 +202,24 @@ export default function Home() {
         </section>
       </Reveal>
 
+      {/* ------------------------------------------------------- sosyal etkimiz */}
+      <Reveal>
+        <section className="my-4 rounded-2xl border border-green-600/40 bg-green-50 px-6 py-10 sm:px-10">
+          <h2 className="max-w-2xl text-2xl font-bold text-green-900 sm:text-3xl">
+            {t("si_title")}
+          </h2>
+          <p className="mt-4 max-w-2xl text-green-900/80">{t("si_p1")}</p>
+          <p className="mt-3 max-w-2xl text-green-900/80">{t("si_p2")}</p>
+          <p className="mt-3 max-w-2xl text-green-900/80">{t("si_p3")}</p>
+          <Link
+            href="/bursayla-ilk-bulusma"
+            className="mt-7 inline-block rounded-full bg-green-700 px-6 py-3 font-semibold text-white hover:opacity-90"
+          >
+            {t("si_cta")} →
+          </Link>
+        </section>
+      </Reveal>
+
       {/* ------------------------------------------------ iş birlikleri, sponsorlar */}
       <section className="border-t border-line py-14">
         <Reveal>
