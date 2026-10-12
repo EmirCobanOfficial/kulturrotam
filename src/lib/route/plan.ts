@@ -60,6 +60,73 @@ export function planRoute(
     current = place;
   }
 
+  // Açgözlü seçim hangi mekanlara gidileceğini iyi buluyor ama sırayı değil:
+  // puan farkı yürüme cezasını yenebildiği için rota kendi üstünden geçiyordu
+  // (sabah Tophane'ye çık, şehri dolaş, akşam 24 dk yürüyerek Tophane'ye dön).
+  //
+  // Seçimi olduğu gibi bırakıp yalnızca sırayı kısaltıyoruz, sonra zamanlamayı
+  // baştan kuruyoruz. Yeni sıra bir durağı açılış saatine ya da süre bütçesine
+  // kurban ederse kabul etmiyoruz: kısa rota uğruna durak kaybetmek kötü takas.
+  const chosen = stops.filter((s) => !s.isMeal).map((s) => s.place);
+  if (chosen.length > 2) {
+    const candidate = schedule(
+      optimizeOrder(chosen),
+      foods,
+      prefs,
+      endOfTrip,
+      eventByPlace,
+    );
+    const keepsEveryStop =
+      candidate.filter((s) => !s.isMeal).length === chosen.length;
+    if (keepsEveryStop && routeWalkMinutes(candidate) < routeWalkMinutes(stops)) {
+      return candidate;
+    }
+  }
+
+  return stops;
+}
+
+/** Rotadaki toplam yürüme, dakika. */
+function routeWalkMinutes(stops: RouteStop[]): number {
+  return stops.reduce((total, s) => total + s.travelMinutes, 0);
+}
+
+/**
+ * Durak listesi sabitken zamanlamayı kurar: sıra verilen sıradır, seçim yapmaz.
+ * Yemek molası yine ilk uygun yemek penceresinde araya girer.
+ */
+function schedule(
+  ordered: Place[],
+  foods: Place[],
+  prefs: RoutePrefs,
+  endOfTrip: number,
+  eventByPlace: Map<string, EventItem>,
+): RouteStop[] {
+  const stops: RouteStop[] = [];
+  let clock = prefs.startHour * 60;
+  let current: Place | null = null;
+  let mealTaken = false;
+
+  for (const place of ordered) {
+    if (prefs.wantsFood && !mealTaken && inMealWindow(clock)) {
+      const meal = pickMeal(foods, current, clock, endOfTrip, eventByPlace);
+      mealTaken = true;
+      if (meal) {
+        stops.push(meal);
+        clock = meal.departure;
+        current = meal.place;
+      }
+    }
+
+    const travelMinutes = current ? walkMinutes(current, place) : 0;
+    const stop = fit(place, clock, travelMinutes, endOfTrip, false, eventByPlace);
+    if (!stop) continue;
+
+    stops.push(stop);
+    clock = stop.departure;
+    current = place;
+  }
+
   return stops;
 }
 

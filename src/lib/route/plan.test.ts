@@ -267,3 +267,70 @@ describe("bestInsertIndex", () => {
     expect(bestInsertIndex([D], A)).toBeGreaterThan(0);
   });
 });
+
+describe("planRoute sıralaması", () => {
+  // Bildirilen durum: Tophane Parkı sabah geçilen noktanın yanında ama
+  // puanı düşük olduğu için en sona atılıyor, akşam 24 dk geri yürünüyordu.
+  const baslangic = place({ slug: "baslangic", lng: 29.0, tags: ["muze"], points_reward: 60 });
+  const yanindaki = place({ slug: "yanindaki", lng: 29.001, category: "park" });
+  const orta = place({ slug: "orta", lng: 29.04, tags: ["muze"] });
+  const uzak = place({ slug: "uzak", lng: 29.08, tags: ["muze"] });
+
+  const gezi: RoutePrefs = {
+    startHour: 9,
+    hours: 11,
+    interests: ["muze"],
+    budget: 3,
+    wantsFood: false,
+  };
+
+  const hepsi = [baslangic, yanindaki, orta, uzak];
+
+  function yurume(stops: ReturnType<typeof planRoute>): number {
+    return stops.reduce((t, s) => t + s.travelMinutes, 0);
+  }
+
+  it("başlangıcın yanındaki düşük puanlı mekanı sona atmaz", () => {
+    const stops = planRoute(gezi, hepsi);
+    const sira = stops.map((s) => s.place.slug);
+
+    expect(sira[sira.length - 1]).not.toBe("yanindaki");
+    expect(sira.indexOf("yanindaki")).toBeLessThan(sira.indexOf("uzak"));
+  });
+
+  it("hiçbir durağı kaybetmeden daha az yürütür", () => {
+    const stops = planRoute(gezi, hepsi);
+
+    expect(stops).toHaveLength(4);
+    expect([...stops.map((s) => s.place.slug)].sort()).toEqual([
+      "baslangic",
+      "orta",
+      "uzak",
+      "yanindaki",
+    ]);
+    // Açgözlü sıra (baslangic → orta → uzak → yanindaki) iki katından fazla
+    // yürütüyordu; düzeltilmiş sıra geri dönüşü tamamen kaldırır.
+    expect(yurume(stops)).toBeLessThan(yurume(planManualRoute(
+      [baslangic, orta, uzak, yanindaki], 9,
+    )));
+  });
+
+  it("saatler ve süre bütçesi korunur: varış açılıştan önce olamaz", () => {
+    const stops = planRoute(gezi, hepsi);
+
+    for (const s of stops) {
+      expect(s.arrival).toBeGreaterThanOrEqual(s.place.open_hour * 60);
+      expect(s.departure).toBeLessThanOrEqual(s.place.close_hour * 60);
+      expect(s.departure).toBeLessThanOrEqual(gezi.startHour * 60 + gezi.hours * 60);
+    }
+  });
+
+  it("yemek molası istendiğinde yeni sırada da korunur", () => {
+    const lokanta = place({ slug: "lokanta", category: "yemek", lng: 29.02 });
+    // 11:00'da başla ki rota yemek penceresinin (12:00-14:00) içinden geçsin;
+    // 09:00 başlangıcı öğleden önce bitiyor ve mola eklenecek an hiç gelmiyor.
+    const stops = planRoute({ ...gezi, startHour: 11, wantsFood: true }, [...hepsi, lokanta]);
+
+    expect(stops.some((s) => s.isMeal)).toBe(true);
+  });
+});
