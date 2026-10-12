@@ -14,6 +14,13 @@ alter table public.events
 --    'belediye' seed'ini silen satiri bunlara dokunmaz.
 delete from public.events where source = 'kesif';
 
+insert into public.events (place_id, title_tr, title_en, starts_at, ends_at, source, image_url)
+select p.id, 'M' || chr(252) || 'zede Bir Gece: Gen' || chr(231) || 'lik, K' || chr(252) || 'lt' || chr(252) || 'r Sanat ve Sosyal Giri' || chr(351) || 'imcilik Hackathonu',
+       'A Night at the Museum: Youth, Culture, Arts and Social Entrepreneurship Hackathon',
+       current_date + time '20:00', current_date + interval '1 day' + time '08:00',
+       'kesif', '/gorsel/etkinlik-muzede-bir-gece.jpg'
+from public.places p where p.slug = 'kent-muzesi';
+
 insert into public.events (place_id, title_tr, title_en, starts_at, ends_at, source)
 select p.id, 'Bu Gece Sinema: A' || chr(231) || chr(305) || 'k Hava G' || chr(246) || 'sterimi', 'Tonight at the Cinema: Open-Air Screening',
        current_date + time '20:00', current_date + time '22:30', 'kesif'
