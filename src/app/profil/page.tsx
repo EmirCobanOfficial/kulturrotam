@@ -74,15 +74,29 @@ export default function ProfilePage() {
             {t("auth_signed_in_as")}: <strong className="text-foreground">{account.email}</strong>
           </span>
         ) : (
-          <>
-            <span className="text-muted">{t("auth_guest")}</span>
-            <Link
-              href="/giris"
-              className="ml-auto rounded-full bg-brand px-4 py-1.5 font-semibold text-white"
-            >
-              {t("auth_signup")}
-            </Link>
-          </>
+          /*
+            Giriş menüden kaldırıldı; hesaba giden tek yol burası. O yüzden
+            tek satırlık bir link değil, neden kaydolunacağını da söyleyen
+            bir blok: puanlar kaybolmuyor, aynı hesaba taşınıyor.
+          */
+          <div className="w-full">
+            <p className="font-semibold text-foreground">{t("auth_guest")}</p>
+            <p className="mt-1 text-muted">{t("auth_keeps_points")}</p>
+            <div className="mt-3 flex flex-wrap gap-2">
+              <Link
+                href="/giris"
+                className="rounded-full bg-brand px-5 py-2 font-semibold text-white hover:opacity-90"
+              >
+                {t("auth_signup")}
+              </Link>
+              <Link
+                href="/giris"
+                className="rounded-full border border-line px-5 py-2 font-semibold hover:bg-brand-soft"
+              >
+                {t("auth_signin")}
+              </Link>
+            </div>
+          </div>
         )}
       </div>
 

@@ -52,14 +52,16 @@ export default function SiteHeader() {
               {t(l.key)}
             </Link>
           ))}
-          {signedIn ? (
+          {/*
+            Giriş menüde durmuyor: kayıt isteğe bağlı, anonim gezen kullanıcı
+            zaten her şeyi yapabiliyor. Kaydolmak isteyen Profil'den geçer,
+            orada hesap satırı ve kayıt butonu var. Çıkış kalıyor — giriş
+            yapmış kullanıcının çıkacak bir yeri olmalı.
+          */}
+          {signedIn && (
             <button onClick={onSignOut} className={linkClass}>
               {t("nav_signout")}
             </button>
-          ) : (
-            <Link className={linkClass} href="/giris">
-              {t("nav_signin")}
-            </Link>
           )}
         </nav>
 
@@ -100,21 +102,13 @@ export default function SiteHeader() {
                 {t(l.key)}
               </Link>
             ))}
-            {signedIn ? (
+            {signedIn && (
               <button
                 onClick={onSignOut}
                 className="rounded-lg px-3 py-2 text-left font-medium hover:bg-brand-soft"
               >
                 {t("nav_signout")}
               </button>
-            ) : (
-              <Link
-                href="/giris"
-                onClick={() => setOpen(false)}
-                className="rounded-lg px-3 py-2 font-medium hover:bg-brand-soft"
-              >
-                {t("nav_signin")}
-              </Link>
             )}
           </div>
         </nav>
