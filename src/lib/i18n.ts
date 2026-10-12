@@ -77,6 +77,8 @@ const DICT = {
 
     home_quick_what: "Ne keşfetmek istersin?",
     home_quick_time: "Ne kadar zamanın var?",
+    home_quick_date: "Ne zaman geliyorsun?",
+    home_events_on: "tarihinde Bursa'da",
     home_quick_how: "Nasıl gezmek istersin?",
     home_quick_cta: "Rotamı Bul",
     home_quick_walk: "Yürüyerek",
@@ -305,6 +307,8 @@ const DICT = {
 
     home_quick_what: "What would you like to see?",
     home_quick_time: "How much time do you have?",
+    home_quick_date: "When are you coming?",
+    home_events_on: "in Bursa",
     home_quick_how: "How do you want to travel?",
     home_quick_cta: "Find My Route",
     home_quick_walk: "On foot",

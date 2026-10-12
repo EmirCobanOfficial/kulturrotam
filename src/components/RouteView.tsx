@@ -3,7 +3,7 @@
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
-import { fetchPlaces, fetchTodayEvents } from "@/lib/data";
+import { fetchEventsOn, fetchPlaces } from "@/lib/data";
 import { errorText } from "@/lib/errors";
 import {
   CATEGORY_LABEL,
@@ -12,6 +12,7 @@ import {
   placeName,
   useLang,
 } from "@/lib/i18n";
+import { fromISODate } from "@/lib/dates";
 import { supabaseConfigured } from "@/lib/supabase/client";
 import { planRoute, formatClock } from "@/lib/route/plan";
 import type { EventItem, Place, RoutePrefs, RouteStop } from "@/lib/types";
@@ -21,7 +22,14 @@ const RouteMap = dynamic(() => import("@/components/RouteMap"), {
   loading: () => <div className="grid h-full place-items-center text-muted">Harita yükleniyor…</div>,
 });
 
-export default function RouteView({ prefs }: { prefs: RoutePrefs }) {
+export default function RouteView({
+  prefs,
+  date,
+}: {
+  prefs: RoutePrefs;
+  /** "2026-10-15"; yoksa bugün. Rozet bu günün etkinliklerine bakar. */
+  date?: string | null;
+}) {
   const { lang, t } = useLang();
   const [places, setPlaces] = useState<Place[] | null>(null);
   const [events, setEvents] = useState<EventItem[]>([]);
@@ -34,10 +42,10 @@ export default function RouteView({ prefs }: { prefs: RoutePrefs }) {
     }
     fetchPlaces().then(setPlaces).catch((e) => setError(errorText(e)));
     // Etkinlik tablosu yoksa rota yine çizilsin: bu hata rotayı düşürmez.
-    fetchTodayEvents()
+    fetchEventsOn(fromISODate(date))
       .then(setEvents)
       .catch(() => setEvents([]));
-  }, []);
+  }, [date]);
 
   const stops = useMemo<RouteStop[]>(
     () => (places ? planRoute(prefs, places, events) : []),

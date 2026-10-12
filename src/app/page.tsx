@@ -1,16 +1,19 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import ProblemCards from "@/components/ProblemCards";
 import Reveal from "@/components/Reveal";
-import { fetchPlaces, fetchTodayEvents } from "@/lib/data";
+import { fetchEventsOn, fetchPlaces } from "@/lib/data";
+import { dayLabel, isSameDay, nextDays, toISODate } from "@/lib/dates";
 import { INTEREST_LABEL, eventTitle, placeName, useLang } from "@/lib/i18n";
 import type { EventItem, Place } from "@/lib/types";
 
 // Sihirbazdaki listeyle birebir aynı olmalı: seçim oraya parametre olarak taşınıyor.
 const INTERESTS = ["tarihi", "muze", "mimari", "manzara", "alisveris", "bahce"] as const;
 const HOURS = [2, 3, 4, 6] as const;
+/** Önümüzdeki iki hafta: "haftaya çarşamba oradayım" sorusu bu aralığa düşer. */
+const DAYS = 14;
 
 /** "15:00" — saat dilimi sürprizi olmasın diye yerel saate çeviriyoruz. */
 function clock(iso: string): string {
@@ -24,24 +27,28 @@ export default function Home() {
   const [interest, setInterest] = useState<string>(INTERESTS[0]);
   const [hours, setHours] = useState<number>(3);
   const [wantsFood, setWantsFood] = useState(true);
+  const [dayIndex, setDayIndex] = useState(0);
 
   const [events, setEvents] = useState<EventItem[]>([]);
   const [places, setPlaces] = useState<Place[]>([]);
 
+  const days = useMemo(() => nextDays(DAYS), []);
+  const selectedDay = days[dayIndex] ?? days[0];
+
   useEffect(() => {
-    // Etkinlik tabloları yoksa ana sayfa yine açılmalı: hata yutulur, bölüm boş görünür.
-    Promise.all([fetchTodayEvents(), fetchPlaces()])
-      .then(([e, p]) => {
-        setEvents(e);
-        setPlaces(p);
-      })
-      .catch(() => {
-        setEvents([]);
-      });
+    fetchPlaces().then(setPlaces).catch(() => setPlaces([]));
   }, []);
 
+  useEffect(() => {
+    // Etkinlik tabloları yoksa ana sayfa yine açılmalı: hata yutulur, bölüm boş görünür.
+    fetchEventsOn(selectedDay)
+      .then(setEvents)
+      .catch(() => setEvents([]));
+  }, [selectedDay]);
+
   const wizardHref =
-    `/sihirbaz?interests=${interest}&hours=${hours}&food=${wantsFood ? 1 : 0}`;
+    `/sihirbaz?interests=${interest}&hours=${hours}&food=${wantsFood ? 1 : 0}` +
+    `&date=${toISODate(selectedDay)}`;
 
   const cards = [
     { label: t("home_card_culture"), href: "/sihirbaz", from: "from-brand" },
@@ -82,7 +89,22 @@ export default function Home() {
 
       {/* ------------------------------------------------- hızlı başlangıç çubuğu */}
       <Reveal>
-        <div className="grid gap-3 rounded-2xl border border-line bg-surface p-4 shadow-sm sm:grid-cols-[1fr_1fr_1fr_auto]">
+        <div className="grid gap-3 rounded-2xl border border-line bg-surface p-4 shadow-sm sm:grid-cols-2 lg:grid-cols-[1fr_1fr_1fr_1fr_auto]">
+          <label className="block">
+            <span className="text-xs font-semibold text-muted">{t("home_quick_date")}</span>
+            <select
+              value={dayIndex}
+              onChange={(e) => setDayIndex(Number(e.target.value))}
+              className="mt-1 w-full rounded-lg border border-line bg-surface px-3 py-2 font-semibold"
+            >
+              {days.map((d, i) => (
+                <option key={toISODate(d)} value={i}>
+                  {dayLabel(d, lang)}
+                </option>
+              ))}
+            </select>
+          </label>
+
           <label className="block">
             <span className="text-xs font-semibold text-muted">{t("home_quick_what")}</span>
             <select
@@ -156,7 +178,11 @@ export default function Home() {
       {/* ------------------------------------------ etkinlikler ve duyurular */}
       <section className="border-t border-line py-14">
         <Reveal>
-          <h2 className="text-2xl font-bold sm:text-3xl">{t("home_events_title")}</h2>
+          <h2 className="text-2xl font-bold sm:text-3xl">
+            {isSameDay(selectedDay, new Date())
+              ? t("home_events_title")
+              : `${dayLabel(selectedDay, lang)} ${t("home_events_on")}`}
+          </h2>
           <p className="mt-3 max-w-2xl text-muted">{t("home_events_lead")}</p>
         </Reveal>
 

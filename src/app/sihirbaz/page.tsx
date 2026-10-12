@@ -18,6 +18,8 @@ export default function WizardPage() {
   const [interests, setInterests] = useState<string[]>(["tarihi"]);
   const [budget, setBudget] = useState(2);
   const [wantsFood, setWantsFood] = useState(true);
+  /** Ana sayfadan gelen gün; rotadaki etkinlik rozeti bu güne bakar. */
+  const [date, setDate] = useState<string | null>(null);
 
   // Ana sayfadaki hızlı başlangıç çubuğundan gelen seçimleri uygula.
   // useSearchParams yerine mount sonrası okuyoruz: sayfa statik kalır ve
@@ -34,6 +36,9 @@ export default function WizardPage() {
 
     const food = q.get("food");
     if (food === "1" || food === "0") setWantsFood(food === "1");
+
+    const d = q.get("date");
+    if (d && /^\d{4}-\d{2}-\d{2}$/.test(d)) setDate(d);
   }, []);
 
   function toggleInterest(id: string) {
@@ -50,6 +55,7 @@ export default function WizardPage() {
       budget: String(budget),
       food: wantsFood ? "1" : "0",
       interests: interests.join(","),
+      ...(date ? { date } : {}),
     });
     void prefs;
     router.push(`/rota?${q.toString()}`);

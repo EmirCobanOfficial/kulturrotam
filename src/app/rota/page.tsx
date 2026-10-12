@@ -14,7 +14,7 @@ export default async function RoutePage({
     wantsFood: sp.food !== "0",
     interests: (sp.interests ?? "tarihi").split(",").filter(Boolean),
   };
-  return <RouteView prefs={prefs} />;
+  return <RouteView prefs={prefs} date={sp.date ?? null} />;
 }
 
 function clamp(n: number, min: number, max: number, fallback: number): number {

@@ -98,9 +98,14 @@ export async function setNickname(nickname: string) {
 }
 
 /** Bugün başlayan veya bugüne sarkan belediye etkinlikleri. */
+/** Bugünün etkinlikleri. Tarih seçimi olan yerlerde fetchEventsOn kullan. */
 export async function fetchTodayEvents(): Promise<EventItem[]> {
-  const now = new Date();
-  const dayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  return fetchEventsOn(new Date());
+}
+
+/** Verilen günün etkinlikleri. Gün sınırları kullanıcının yerel saatine göre. */
+export async function fetchEventsOn(day: Date): Promise<EventItem[]> {
+  const dayStart = new Date(day.getFullYear(), day.getMonth(), day.getDate());
   const dayEnd = new Date(dayStart.getTime() + 24 * 60 * 60 * 1000);
   const { data, error } = await supabase
     .from("events")

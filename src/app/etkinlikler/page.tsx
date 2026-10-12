@@ -2,10 +2,11 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Reveal from "@/components/Reveal";
 import TicketContribution from "@/components/TicketContribution";
-import { fetchPlaces, fetchTodayEvents } from "@/lib/data";
+import { fetchEventsOn, fetchPlaces } from "@/lib/data";
+import { dayLabel, nextDays, toISODate } from "@/lib/dates";
 import { eventTitle, placeName, useLang } from "@/lib/i18n";
 import type { EventItem, Place } from "@/lib/types";
 
@@ -17,21 +18,41 @@ export default function EventsPage() {
   const { lang, t } = useLang();
   const [events, setEvents] = useState<EventItem[]>([]);
   const [places, setPlaces] = useState<Place[]>([]);
+  const [dayIndex, setDayIndex] = useState(0);
+
+  const days = useMemo(() => nextDays(14), []);
+  const selectedDay = days[dayIndex] ?? days[0];
 
   useEffect(() => {
-    Promise.all([fetchTodayEvents(), fetchPlaces()])
-      .then(([e, p]) => {
-        setEvents(e);
-        setPlaces(p);
-      })
-      .catch(() => setEvents([]));
+    fetchPlaces().then(setPlaces).catch(() => setPlaces([]));
   }, []);
+
+  useEffect(() => {
+    fetchEventsOn(selectedDay)
+      .then(setEvents)
+      .catch(() => setEvents([]));
+  }, [selectedDay]);
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-12">
       <Reveal>
         <h1 className="text-3xl font-bold">{t("ev_title")}</h1>
         <p className="mt-3 max-w-2xl text-muted">{t("ev_lead")}</p>
+
+        <label className="mt-6 block max-w-xs">
+          <span className="text-xs font-semibold text-muted">{t("home_quick_date")}</span>
+          <select
+            value={dayIndex}
+            onChange={(e) => setDayIndex(Number(e.target.value))}
+            className="mt-1 w-full rounded-lg border border-line bg-surface px-3 py-2 font-semibold"
+          >
+            {days.map((d, i) => (
+              <option key={toISODate(d)} value={i}>
+                {dayLabel(d, lang)}
+              </option>
+            ))}
+          </select>
+        </label>
       </Reveal>
 
       <div className="mt-8 grid gap-6 lg:grid-cols-[2fr_1fr]">
