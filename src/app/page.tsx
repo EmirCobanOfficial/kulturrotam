@@ -194,7 +194,7 @@ export default function Home() {
           <h2 className="max-w-2xl text-2xl font-bold sm:text-3xl">{t("home_solo_title")}</h2>
           <p className="mt-4 max-w-2xl text-white/80">{t("home_solo_body")}</p>
           <Link
-            href="/sihirbaz"
+            href="/kendi-rotam"
             className="mt-7 inline-block rounded-full bg-white px-6 py-3 font-semibold text-brand hover:opacity-90"
           >
             {t("home_solo_cta")} →

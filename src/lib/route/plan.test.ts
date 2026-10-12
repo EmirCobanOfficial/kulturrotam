@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { planRoute } from "./plan";
+import { planManualRoute, planRoute } from "./plan";
 import type { EventItem, Place, RoutePrefs } from "@/lib/types";
 
 function place(over: Partial<Place> & { slug: string }): Place {
@@ -117,5 +117,89 @@ describe("planRoute etkinlikler", () => {
   it("etkinlik listesi boşken eskisi gibi çalışır", () => {
     const places = [place({ slug: "a" }), place({ slug: "b" })];
     expect(planRoute({ ...prefs, wantsFood: false }, places)).toHaveLength(2);
+  });
+});
+
+describe("planManualRoute", () => {
+  it("kullanıcının seçtiği sırayı korur, skora göre yeniden sıralamaz", () => {
+    const a = place({ slug: "a", name_tr: "A" });
+    const b = place({ slug: "b", name_tr: "B" });
+    const c = place({ slug: "c", name_tr: "C" });
+
+    const stops = planManualRoute([c, a, b], 10);
+
+    expect(stops.map((s) => s.place.slug)).toEqual(["c", "a", "b"]);
+  });
+
+  it("ilk durakta yürüme süresi yok, sonrakilerde varış ziyaretle ilerler", () => {
+    const a = place({ slug: "a", visit_minutes: 45 });
+    const b = place({ slug: "b", visit_minutes: 30 });
+
+    const [first, second] = planManualRoute([a, b], 10);
+
+    expect(first.travelMinutes).toBe(0);
+    expect(first.arrival).toBe(10 * 60);
+    expect(first.departure).toBe(10 * 60 + 45);
+    // Aynı koordinattalar: yürüme 0, yani ikinci durak birincinin bitişinde başlar.
+    expect(second.arrival).toBe(first.departure);
+    expect(second.departure).toBe(first.departure + 30);
+  });
+
+  it("mekan henüz açılmadıysa varışı açılış saatine çeker", () => {
+    const erken = place({ slug: "erken", open_hour: 13 });
+
+    const [stop] = planManualRoute([erken], 9);
+
+    expect(stop.arrival).toBe(13 * 60);
+    expect(stop.departure).toBe(13 * 60 + 30);
+  });
+
+  it("kapanışı aşan durağı atmaz, uyarı olarak işaretler", () => {
+    // 16:00'da başlayıp 90 dk sürer, yani 17:30'da biter; kapanış 17:00.
+    // Tam kapanışta biten ziyaret aşım sayılmaz, fit() ile aynı sınır.
+    const gec = place({ slug: "gec", close_hour: 17, visit_minutes: 90 });
+
+    const [stop] = planManualRoute([gec], 16, []);
+
+    // Sihirbaz bu durağı elerdi; manuel rotada kullanıcı sırayı kendi seçti.
+    expect(stop.outsideHours).toBe(true);
+    expect(stop.place.slug).toBe("gec");
+  });
+
+  it("saatine sığan durakta uyarı bırakmaz", () => {
+    const uygun = place({ slug: "uygun", close_hour: 20, visit_minutes: 30 });
+
+    const [stop] = planManualRoute([uygun], 10);
+
+    expect(stop.outsideHours).toBeUndefined();
+  });
+
+  it("yemek kategorisini yemek molası sayar", () => {
+    const lokanta = place({ slug: "lokanta", category: "yemek" });
+
+    const [stop] = planManualRoute([lokanta], 12);
+
+    expect(stop.isMeal).toBe(true);
+  });
+
+  it("o gün etkinliği olan mekana etkinliği iliştirir", () => {
+    const p = place({ slug: "ulu-cami" });
+    const event: EventItem = {
+      id: "e1",
+      place_id: p.id,
+      title_tr: "Hat Sergisi",
+      title_en: null,
+      starts_at: new Date().toISOString(),
+      ends_at: new Date().toISOString(),
+      source: "belediye",
+    };
+
+    const [stop] = planManualRoute([p], 10, [event]);
+
+    expect(stop.event?.title_tr).toBe("Hat Sergisi");
+  });
+
+  it("boş seçimde boş rota döner", () => {
+    expect(planManualRoute([], 10)).toEqual([]);
   });
 });

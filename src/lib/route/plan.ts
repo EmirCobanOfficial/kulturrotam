@@ -117,6 +117,50 @@ function pickMeal(
  * Mekanı saate yerleştir. Açılışı beklemek gerekiyorsa bekler;
  * kapanışa veya gezi süresine sığmıyorsa null döner.
  */
+/**
+ * Kullanıcının kendi seçtiği sırayla rota kurar.
+ *
+ * Sihirbazdan farkı: eleme ve puanlama yok. Kullanıcı sırayı bilerek seçti,
+ * bu yüzden hiçbir durak sessizce atılmaz — kapanışı aşan ziyaret `outsideHours`
+ * ile işaretlenir ve kararı kullanıcıya bırakırız. Mekan henüz açılmadıysa
+ * kapıda beklenir, varış saati açılışa çekilir.
+ *
+ * planRoute gibi saf fonksiyon: Supabase'den bağımsız, testli.
+ */
+export function planManualRoute(
+  chosen: Place[],
+  startHour: number,
+  events: EventItem[] = [],
+): RouteStop[] {
+  const eventByPlace = new Map(events.map((e) => [e.place_id, e]));
+  const stops: RouteStop[] = [];
+
+  let clock = startHour * 60;
+  let current: Place | null = null;
+
+  for (const place of chosen) {
+    const travelMinutes = current ? walkMinutes(current, place) : 0;
+    const arrival = Math.max(clock + travelMinutes, place.open_hour * 60);
+    const departure = arrival + place.visit_minutes;
+
+    const event = eventByPlace.get(place.id);
+    stops.push({
+      place,
+      arrival,
+      departure,
+      travelMinutes,
+      isMeal: place.category === "yemek",
+      ...(event ? { event } : {}),
+      ...(departure > place.close_hour * 60 ? { outsideHours: true } : {}),
+    });
+
+    clock = departure;
+    current = place;
+  }
+
+  return stops;
+}
+
 function fit(
   place: Place,
   clock: number,

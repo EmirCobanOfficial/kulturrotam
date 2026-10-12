@@ -75,6 +75,12 @@ export type RouteStop = {
   isMeal: boolean;
   /** O gün bu mekanda etkinlik varsa. Rota motoru etkinlikli mekanı öne alır. */
   event?: EventItem;
+  /**
+   * Yalnızca manuel rotada: ziyaret mekanın kapanışını aşıyor. Sihirbaz böyle
+   * bir durağı zaten elerdi; manuel rotada sırayı kullanıcı seçtiği için durak
+   * atılmaz, uyarı olarak işaretlenir.
+   */
+  outsideHours?: boolean;
 };
 
 export type EventItem = {
