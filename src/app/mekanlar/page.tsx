@@ -1,6 +1,8 @@
 "use client";
 
+import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
+import PhotoFeed from "@/components/PhotoFeed";
 import Reveal from "@/components/Reveal";
 import { addReview, fetchPlaces, fetchReviews } from "@/lib/data";
 import { errorText } from "@/lib/errors";
@@ -23,6 +25,13 @@ export default function PlacesPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [flash, setFlash] = useState<string | null>(null);
+  /** Akış ayrı bir sayfaydı; /akis buraya yönlendiriyor, sekme oradan açılır. */
+  const [tab, setTab] = useState<"mekanlar" | "akis">("mekanlar");
+
+  useEffect(() => {
+    const q = new URLSearchParams(window.location.search);
+    if (q.get("sekme") === "akis") setTab("akis");
+  }, []);
 
   async function load() {
     const [p, r] = await Promise.all([fetchPlaces(), fetchReviews()]);
@@ -63,9 +72,39 @@ export default function PlacesPage() {
     <div className="mx-auto max-w-3xl px-4 py-12">
       <Reveal>
         <h1 className="text-3xl font-bold">{t("rv_title")}</h1>
-        <p className="mt-3 text-muted">{t("rv_lead")}</p>
-        <p className="mt-1 text-sm text-muted">{t("rv_one_each")}</p>
+
+        <div className="mt-5 inline-flex rounded-full border border-line bg-surface p-1">
+          <button
+            onClick={() => setTab("mekanlar")}
+            className={`rounded-full px-5 py-2 text-sm font-semibold ${
+              tab === "mekanlar" ? "bg-brand text-white" : "text-muted hover:bg-brand-soft"
+            }`}
+          >
+            {t("rv_tab_places")}
+          </button>
+          <button
+            onClick={() => setTab("akis")}
+            className={`rounded-full px-5 py-2 text-sm font-semibold ${
+              tab === "akis" ? "bg-brand text-white" : "text-muted hover:bg-brand-soft"
+            }`}
+          >
+            {t("rv_tab_feed")}
+          </button>
+        </div>
+
+        {tab === "mekanlar" && (
+          <>
+            <p className="mt-4 text-muted">{t("rv_lead")}</p>
+            <p className="mt-1 text-sm text-muted">{t("rv_one_each")}</p>
+          </>
+        )}
       </Reveal>
+
+      {tab === "akis" && (
+        <div className="mt-8">
+          <PhotoFeed />
+        </div>
+      )}
 
       {flash && (
         <p className="mt-4 rounded-lg bg-brand-soft px-4 py-3 text-sm font-medium text-brand">
@@ -73,6 +112,7 @@ export default function PlacesPage() {
         </p>
       )}
 
+      {tab === "mekanlar" && (
       <div className="mt-8 space-y-5">
         {places.map((place, i) => (
           <Reveal key={place.id} delay={Math.min(i, 4) * 70}>
@@ -90,6 +130,7 @@ export default function PlacesPage() {
           </Reveal>
         ))}
       </div>
+      )}
     </div>
   );
 }
@@ -134,7 +175,18 @@ function PlaceCard({
   }
 
   return (
-    <article className="rounded-xl border border-line bg-surface p-5">
+    <article className="overflow-hidden rounded-xl border border-line bg-surface">
+      {/* Mekan görseli veritabanındaki image_url'den; yoksa kart görselsiz çizilir. */}
+      {place.image_url && (
+        <Image
+          src={place.image_url}
+          alt={placeName(place, lang)}
+          width={1200}
+          height={675}
+          className="aspect-video w-full object-cover"
+        />
+      )}
+      <div className="p-5">
       <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
         <h2 className="text-lg font-semibold">{placeName(place, lang)}</h2>
         <span className="rounded-full bg-brand-soft px-2 py-0.5 text-xs font-semibold text-brand">
@@ -218,6 +270,7 @@ function PlaceCard({
           )}
         </div>
       )}
+      </div>
     </article>
   );
 }

@@ -18,7 +18,6 @@ const LINKS: { href: string; key: TextKey }[] = [
   { href: "/oduller", key: "nav_rewards" },
   { href: "/mekanlar", key: "nav_places" },
   { href: "/etkinlikler", key: "nav_events" },
-  { href: "/akis", key: "nav_feed" },
   { href: "/profil", key: "nav_profile" },
 ];
 

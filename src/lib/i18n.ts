@@ -202,7 +202,9 @@ const DICT = {
     af_note: "Bu gelir bize değil, kültür gezilerine erişimi sınırlı lise öğrencilerine gidiyor.",
 
     nav_places: "Mekanlar",
-    rv_title: "Mekanlar, puanlar ve yorumlar",
+    rv_title: "Mekanlar ve topluluk",
+    rv_tab_places: "Mekanlar ve yorumlar",
+    rv_tab_feed: "Topluluk akışı",
     rv_lead: "Gezdiğin yerleri puanla, kısa bir yorum bırak. Başkalarının ne dediğini gör.",
     rv_no_rating: "Henüz puan yok",
     rv_rating_one: "değerlendirme",
@@ -430,7 +432,9 @@ const DICT = {
     af_note: "That income does not stay with us. It goes to high school students with little access to cultural trips.",
 
     nav_places: "Places",
-    rv_title: "Places, ratings and reviews",
+    rv_title: "Places and community",
+    rv_tab_places: "Places and reviews",
+    rv_tab_feed: "Community feed",
     rv_lead: "Rate the places you visited and leave a short review. See what others said.",
     rv_no_rating: "No ratings yet",
     rv_rating_one: "review",
