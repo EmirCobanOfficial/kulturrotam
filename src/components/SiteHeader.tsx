@@ -26,6 +26,9 @@ export default function SiteHeader() {
           <Link className="rounded-full px-3 py-1.5 hover:bg-brand-soft" href="/sihirbaz">
             {t("nav_route_build")}
           </Link>
+          <Link className="rounded-full px-3 py-1.5 hover:bg-brand-soft" href="/birlikte-gezelim">
+            {t("nav_together")}
+          </Link>
           <Link className="rounded-full px-3 py-1.5 hover:bg-brand-soft" href="/kendi-rotam">
             {t("nav_custom")}
           </Link>
