@@ -29,7 +29,7 @@ alır. Uygulama canlıda çalışıyor; kalan iş demoyu sahneye hazırlamak ve 
 | Manuel rota (`/kendi-rotam`) + sıralama optimizasyonu | ✅ canlıda; sihirbaz rotası da artık kendi üstünden geçmiyor |
 | Sosyal etki programı (`/bursayla-ilk-bulusma`) | ✅ canlıda; katkı tutarı rakamı bekliyor |
 | Mekan puanlama ve yorum (`/mekanlar`) | ✅ `reviews.sql` çalıştırıldı — **canlı test bekliyor** |
-| Etkinlik takvimi: her gün, her alan | ✅ `etkinlik-takvimi.sql` çalıştırıldı; bugünün programı doğrulandı, 21 günün tamamı `dogrula-etkinlik-takvimi.sql` ile bakılacak |
+| Etkinlik takvimi: her gün, her alan | ✅ çalıştırıldı ve veritabanına karşı doğrulandı: 148 etkinlik, 21 gün, 7 alan, eksik yok |
 | QR kodlarının basılı hali | ⛔ canlı domainden yazdırılmadı |
 | Bağımlılık açığı (Dependabot) | ✅ incelendi, demoyu etkilemiyor, bilinçli bırakıldı |
 
@@ -53,11 +53,11 @@ panodan yapıştırmak güvenli. Yaptıkları:
 İdempotent; puan, rozet, mekan ve kullanıcı verisine dokunmaz.
 
 Kontrolü `supabase/dogrula-etkinlik-takvimi.sql` yapıyor: tek sorgu, dokuz
-satır, hepsi `OK` dönmeli (148 etkinlik, 21 gün, 7 alan, etkinliksiz gün-alan
-yok, dört ilgi etiketi yerinde, bugünün en erken saati 08:00). Supabase
-editörü arka arkaya yapıştırılan sorgulardan yalnızca sonuncusunun sonucunu
-gösterdiği için hepsi tek sorguya toplandı. Bugünün programı bu yolla
-doğrulandı; 21 günün tamamı ve etiket sayıları henüz görülmedi.
+satır. **12 Ekim'de dokuzu da `OK` döndü** — 148 etkinlik, 21 gün, 7 alan,
+etkinliksiz gün-alan yok, dört ilgi etiketi yerinde, bugünün en erken saati
+08:00. Takvimi değiştirirsen aynı dosyayı tekrar çalıştır. (Supabase editörü
+arka arkaya yapıştırılan sorgulardan yalnızca sonuncusunun sonucunu
+gösterdiği için hepsi tek sorguya toplandı.)
 
 ## Şu Anki Durum
 

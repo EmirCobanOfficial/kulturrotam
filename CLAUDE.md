@@ -49,13 +49,12 @@ günlük etkinliklerinin yerini alır — o dosya yalnızca `image_url` /
 `ticket_url` kolonları için hâlâ gerekli. İdempotent; puan, rozet ve kullanıcı
 verisine dokunmaz.
 
-**Doğrulamanın yapılan kısmı:** bugünün programı veritabanından okundu — yedi
-alanın hepsi var, saatler Istanbul saatiyle doğru (`at time zone` çalışmış),
-Türkçe karakterler sağlam. **Henüz bakılmadı:** 21 günün tamamı ve mekan
-etiketlerinin sayısı. `supabase/dogrula-etkinlik-takvimi.sql` tek sorguda
-dokuz kontrolü dönüyor, hepsi `OK` olmalı (Supabase editörü arka arkaya
-yapıştırılan sorgulardan yalnızca sonuncusunun sonucunu gösterir, bu yüzden
-tek sorgu).
+**Veritabanına karşı doğrulandı (12 Ekim):** `supabase/dogrula-etkinlik-takvimi.sql`
+dokuz kontrolün dokuzunda da `OK` döndü — 148 etkinlik, 21 gün, 7 alan,
+etkinliksiz gün-alan çifti yok, `kulturel` 7 / `konser-sinema` 4 / `alisveris` 3
+/ `manzara` 2 mekana yazılmış, saatler Istanbul saatiyle doğru. Takvim
+değişirse aynı dosyayı tekrar çalıştır (tek sorgu: Supabase editörü arka
+arkaya yapıştırılanlardan yalnızca sonuncusunun sonucunu gösteriyor).
 
 **İlgi alanları değişti (12 Ekim):** sihirbaz ve ana sayfadaki hızlı başlangıç
 artık `tarihi, muze, kulturel, konser-sinema, manzara, alisveris` soruyor —
@@ -71,10 +70,8 @@ renk sınıfları Tailwind'den gelir. Yeni düğmeye `px-6 py-3` yazmak yerine
 
 **Kalan iş (hepsi operasyon, kod değil — ayrıntısı `HANDOFF.md`'de):**
 
-1. **`supabase/dogrula-etkinlik-takvimi.sql`'i çalıştır** (Dashboard → SQL
-   Editor) ve dokuz satırın da `OK` döndüğünü gör.
-2. **QR kodlarını yazdır.** `/admin/qr` sayfasını **canlı domainden** aç ve yazdır — QR değerleri `window.location.origin` ile üretilir; yerelden yazdırılan kodlar `localhost`, Vercel preview dalından yazdırılanlar ise dal silinince ölen bir adres gösterir.
-3. **Canlıda bir kez dene:** rotada etkinlik rozeti (`/sihirbaz` → rota; Ulu Cami, Koza Han ve Kent Müzesi duraklarında bugüne ait rozet çıkmalı). Hiç test edilmedi.
+1. **QR kodlarını yazdır.** `/admin/qr` sayfasını **canlı domainden** aç ve yazdır — QR değerleri `window.location.origin` ile üretilir; yerelden yazdırılan kodlar `localhost`, Vercel preview dalından yazdırılanlar ise dal silinince ölen bir adres gösterir.
+2. **Canlıda bir kez dene:** rotada etkinlik rozeti (`/sihirbaz` → rota; Ulu Cami, Koza Han ve Kent Müzesi duraklarında bugüne ait rozet çıkmalı). Hiç test edilmedi.
 
 Birden fazla kişi aynı anda çalışıyorsa `KATKI.md`'yi oku: dal açma, şema değişikliği ve puan mantığına dokunma kuralları orada.
 
