@@ -98,6 +98,8 @@ function event(placeId: string): EventItem {
     starts_at: "2026-10-11T10:00:00Z",
     ends_at: "2026-10-11T18:00:00Z",
     source: "belediye",
+    image_url: null,
+    ticket_url: null,
   };
 }
 
@@ -198,6 +200,8 @@ describe("planManualRoute", () => {
       starts_at: new Date().toISOString(),
       ends_at: new Date().toISOString(),
       source: "belediye",
+      image_url: null,
+      ticket_url: null,
     };
 
     const [stop] = planManualRoute([p], 10, [event]);

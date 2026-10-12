@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import Reveal from "@/components/Reveal";
@@ -45,20 +46,45 @@ export default function EventsPage() {
                 const place = places.find((p) => p.id === e.place_id);
                 return (
                   <Reveal key={e.id} delay={i * 90}>
-                    <article className="rounded-xl border border-line bg-surface p-5">
-                      <p className="text-sm font-semibold text-accent">
-                        {clock(e.starts_at)} – {clock(e.ends_at)}
-                      </p>
-                      <h2 className="mt-1 text-lg font-semibold">{eventTitle(e, lang)}</h2>
-                      {place && (
-                        <p className="mt-1 text-sm text-muted">{placeName(place, lang)}</p>
+                    <article className="overflow-hidden rounded-xl border border-line bg-surface">
+                      {/* Görsel takımdan gelecek; gelene kadar kart görselsiz çizilir. */}
+                      {e.image_url && (
+                        <Image
+                          src={e.image_url}
+                          alt={eventTitle(e, lang)}
+                          width={1200}
+                          height={675}
+                          className="aspect-video w-full object-cover"
+                        />
                       )}
-                      <Link
-                        href="/sihirbaz"
-                        className="mt-3 inline-block text-sm font-semibold text-brand underline underline-offset-4"
-                      >
-                        {t("ev_on_route")} →
-                      </Link>
+                      <div className="p-5">
+                        <p className="text-sm font-semibold text-accent">
+                          {clock(e.starts_at)} – {clock(e.ends_at)}
+                        </p>
+                        <h2 className="mt-1 text-lg font-semibold">{eventTitle(e, lang)}</h2>
+                        {place && (
+                          <p className="mt-1 text-sm text-muted">{placeName(place, lang)}</p>
+                        )}
+                        <div className="mt-3 flex flex-wrap items-center gap-4">
+                          <Link
+                            href="/sihirbaz"
+                            className="text-sm font-semibold text-brand underline underline-offset-4"
+                          >
+                            {t("ev_on_route")} →
+                          </Link>
+                          {/* Gerçek yönlendirme linki gelince buton görünür olur. */}
+                          {e.ticket_url && (
+                            <a
+                              href={e.ticket_url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="rounded-full bg-accent px-4 py-1.5 text-sm font-semibold text-white hover:opacity-90"
+                            >
+                              {t("ev_tickets")} →
+                            </a>
+                          )}
+                        </div>
+                      </div>
                     </article>
                   </Reveal>
                 );

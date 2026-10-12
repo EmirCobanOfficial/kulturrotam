@@ -91,6 +91,10 @@ export type EventItem = {
   starts_at: string;
   ends_at: string;
   source: string;
+  /** Etkinlik görseli. Yoksa kart renkli bir blokla çizilir. */
+  image_url: string | null;
+  /** Bilet/yönlendirme bağlantısı. Gerçek link gelene kadar null. */
+  ticket_url: string | null;
 };
 
 export type Photo = {

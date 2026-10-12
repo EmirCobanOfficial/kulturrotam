@@ -236,6 +236,7 @@ const DICT = {
     ev_lead: "Belediye takviminden bugüne ait başlıklar ve rotaya eklenebilecek keşif etkinlikleri.",
     ev_empty: "Bugün için kayıtlı etkinlik yok.",
     ev_on_route: "Rotanda gör",
+    ev_tickets: "Bilet al",
 
   },
   en: {
@@ -465,6 +466,7 @@ const DICT = {
     ev_lead: "Today's entries from the municipal calendar, and discovery events you can add to a route.",
     ev_empty: "No events listed for today.",
     ev_on_route: "See it on your route",
+    ev_tickets: "Get tickets",
 
   },
 } as const;
