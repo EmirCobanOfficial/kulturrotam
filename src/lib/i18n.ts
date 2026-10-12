@@ -191,11 +191,13 @@ const DICT = {
     bib_cta2: "Programa İş Birliğiyle Katıl",
 
     tc_title: "Bu bilet yeni bir keşfe katkı sağlar.",
-    tc_amount_placeholder: "belirlenecek tutar",
-    tc_body1: "TL, Bursa'yla İlk Buluşma programının sosyal katılım bütçesine aktarılacaktır.",
+    tc_body1: "Her ücretli biletten belirli bir tutar, Bursa'yla İlk Buluşma programının sosyal katılım bütçesine aktarılacak. Tutarı etkinliğin maliyeti netleştikten sonra belirleyip bilet sayfasında açıkça göstereceğiz.",
     tc_body2: "Katkınız, kültür gezilerine erişimi sınırlı lise öğrencilerinin ulaşım ve kültürel keşif giderlerini desteklemek için kullanılacaktır.",
     tc_link: "Katkı modelimizi incele",
-    tc_from_ticket: "Bu biletten",
+
+    af_title: "Buradan bilet alırsanız programa katkı sağlarsınız.",
+    af_body: "Etkinlik biletlerine sitemizdeki bağlantılardan ulaştığınızda, yönlendirmeden elde edeceğimiz gelirin tamamını Bursa'yla İlk Buluşma programına aktaracağız. Size ek bir maliyeti olmayacak.",
+    af_note: "Bu gelir bize değil, kültür gezilerine erişimi sınırlı lise öğrencilerine gidiyor.",
 
     ev_title: "Keşif etkinlikleri",
     ev_lead: "Belediye takviminden bugüne ait başlıklar ve rotaya eklenebilecek keşif etkinlikleri.",
@@ -385,11 +387,13 @@ const DICT = {
     bib_cta2: "Partner with the programme",
 
     tc_title: "This ticket helps start a new journey of discovery.",
-    tc_amount_placeholder: "to be confirmed",
-    tc_body1: "TL from this ticket will go to the participation budget of the First Meeting with Bursa programme.",
+    tc_body1: "A set amount from every paid ticket will go to the participation budget of the First Meeting with Bursa programme. We will fix that amount once an event's costs are clear and show it plainly on the ticket page.",
     tc_body2: "Your contribution will help cover travel and discovery costs for high school students with little access to cultural trips.",
     tc_link: "Read how the contribution works",
-    tc_from_ticket: "From this ticket,",
+
+    af_title: "Buying a ticket through us supports the programme.",
+    af_body: "When you reach an event's tickets through a link on this site, we will pass on everything we earn from the referral to the First Meeting with Bursa programme. It costs you nothing extra.",
+    af_note: "That income does not stay with us. It goes to high school students with little access to cultural trips.",
 
     ev_title: "Discovery events",
     ev_lead: "Today's entries from the municipal calendar, and discovery events you can add to a route.",

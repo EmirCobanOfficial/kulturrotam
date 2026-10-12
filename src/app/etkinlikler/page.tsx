@@ -67,9 +67,19 @@ export default function EventsPage() {
           )}
         </section>
 
-        <Reveal>
-          <TicketContribution />
-        </Reveal>
+        <div className="space-y-4">
+          {/* Yönlendirme geliri: arka uç yok, model olduğu gibi anlatılıyor. */}
+          <Reveal>
+            <aside className="rounded-xl border border-accent/40 bg-accent-soft p-4">
+              <p className="font-semibold text-accent">★ {t("af_title")}</p>
+              <p className="mt-2 text-sm">{t("af_body")}</p>
+              <p className="mt-2 text-sm font-semibold">{t("af_note")}</p>
+            </aside>
+          </Reveal>
+          <Reveal delay={80}>
+            <TicketContribution />
+          </Reveal>
+        </div>
       </div>
     </div>
   );
