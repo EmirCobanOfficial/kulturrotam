@@ -32,7 +32,9 @@ Dosya idempotent, tekrar çalıştırılabilir. Tek uyarı: 125. satır `delete 
 
 **12 Ekim'de canlıda doğrulandı:** `/oduller` kupon alma (sarı ve yeşil sekme).
 
-**Canlıda hâlâ denenmedi:** rotadaki etkinlik rozeti.
+**`supabase/reviews.sql` ÇALIŞTIRILMADI.** Mekan puanlama ve yorum (`/mekanlar`) bu göçü bekliyor: `reviews` tablosu + `add_review()` fonksiyonu. Çalıştırılana kadar sayfa "henüz açık değil" mesajı gösterir, başka hiçbir şeyi etkilemez. Dosya ASCII ve idempotent.
+
+**Canlıda hâlâ denenmedi:** rotadaki etkinlik rozeti, `/mekanlar` puanlama ve yorum.
 
 **Sahiplik (12 Ekim, üç kişi paralel çalışıyor):** puan ve ödül tarafı ekipten bir arkadaşa devredildi — `profiles.points`, `coupons`, `redeem_coupon` ve `/oduller` ona ait. O alana dokunmadan önce onunla konuş, yoksa aynı anda iki kişi aynı mantığı yazar.
 

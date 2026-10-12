@@ -78,6 +78,17 @@ create table public.coupons (
   image_url          text
 );
 
+-- Mekan puanlama ve yorum. Canliya ek olarak supabase/reviews.sql ile gider.
+create table public.reviews (
+  id         uuid primary key default gen_random_uuid(),
+  user_id    uuid not null references auth.users on delete cascade,
+  place_id   uuid not null references public.places on delete cascade,
+  rating     integer not null check (rating between 1 and 5),
+  comment    text,
+  created_at timestamptz not null default now(),
+  unique (user_id, place_id)
+);
+
 create table public.redemptions (
   id         uuid primary key default gen_random_uuid(),
   user_id    uuid not null references auth.users on delete cascade,

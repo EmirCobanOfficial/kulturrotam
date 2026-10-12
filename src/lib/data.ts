@@ -1,5 +1,13 @@
 import { ensureSession, supabase } from "@/lib/supabase/client";
-import type { Badge, Coupon, EventItem, Photo, Place, Redemption } from "@/lib/types";
+import type {
+  Badge,
+  Coupon,
+  EventItem,
+  Photo,
+  Place,
+  Redemption,
+  Review,
+} from "@/lib/types";
 
 export async function fetchPlaces(): Promise<Place[]> {
   const { data, error } = await supabase.from("places").select("*").order("sort_order");
@@ -160,4 +168,29 @@ export const POINTS_EVENT = "kr:points";
 
 function pointsChanged() {
   if (typeof window !== "undefined") window.dispatchEvent(new Event(POINTS_EVENT));
+}
+
+/** Tüm değerlendirmeler. Veri küçük, ortalamayı istemcide hesaplıyoruz. */
+export async function fetchReviews(): Promise<Review[]> {
+  const { data, error } = await supabase
+    .from("reviews")
+    .select("*")
+    .order("created_at", { ascending: false });
+  if (error) throw error;
+  return data ?? [];
+}
+
+/** Puan ve yorum. Doğrulama sunucudaki add_review() içinde. */
+export async function addReview(
+  placeId: string,
+  rating: number,
+  comment: string,
+): Promise<Review> {
+  const { data, error } = await supabase.rpc("add_review", {
+    p_place: placeId,
+    p_rating: rating,
+    p_comment: comment,
+  });
+  if (error) throw error;
+  return data as Review;
 }
