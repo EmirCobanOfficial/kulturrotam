@@ -41,15 +41,21 @@ Dosya idempotent, tekrar çalıştırılabilir. Tek uyarı: 125. satır `delete 
 
 **Sahiplik (12 Ekim, üç kişi paralel çalışıyor):** puan ve ödül tarafı ekipten bir arkadaşa devredildi — `profiles.points`, `coupons`, `redeem_coupon` ve `/oduller` ona ait. O alana dokunmadan önce onunla konuş, yoksa aynı anda iki kişi aynı mantığı yazar.
 
-**`supabase/etkinlik-takvimi.sql` HENÜZ ÇALIŞTIRILMADI (12 Ekim).** Etkinlik
-takvimini üç haftaya ve yedi alana yayıyor: `events.area` kolonunu ekler, yeni
-ilgi alanlarının mekan etiketlerini (`kulturel`, `konser-sinema`) yazar ve
-`source = 'kesif'` etkinliklerini yeniden üretir. `etkinlikler.sql`'in tek
+**`supabase/etkinlik-takvimi.sql` çalıştırıldı (12 Ekim).** Etkinlik takvimini
+üç haftaya ve yedi alana yaydı: `events.area` kolonu eklendi, yeni ilgi
+alanlarının mekan etiketleri (`kulturel`, `konser-sinema`) yazıldı ve
+`source = 'kesif'` etkinlikleri yeniden üretildi. `etkinlikler.sql`'in tek
 günlük etkinliklerinin yerini alır — o dosya yalnızca `image_url` /
 `ticket_url` kolonları için hâlâ gerekli. İdempotent; puan, rozet ve kullanıcı
-verisine dokunmaz. Çalıştırmadan önce `/etkinlikler` yalnızca bugünü gösterir
-ve sihirbazdaki **Kültürel** / **Konserler ve sinema** seçenekleri rotayı
-değiştirmez (mekanlarda etiketleri yok).
+verisine dokunmaz.
+
+**Doğrulamanın yapılan kısmı:** bugünün programı veritabanından okundu — yedi
+alanın hepsi var, saatler Istanbul saatiyle doğru (`at time zone` çalışmış),
+Türkçe karakterler sağlam. **Henüz bakılmadı:** 21 günün tamamı ve mekan
+etiketlerinin sayısı. `supabase/dogrula-etkinlik-takvimi.sql` tek sorguda
+dokuz kontrolü dönüyor, hepsi `OK` olmalı (Supabase editörü arka arkaya
+yapıştırılan sorgulardan yalnızca sonuncusunun sonucunu gösterir, bu yüzden
+tek sorgu).
 
 **İlgi alanları değişti (12 Ekim):** sihirbaz ve ana sayfadaki hızlı başlangıç
 artık `tarihi, muze, kulturel, konser-sinema, manzara, alisveris` soruyor —
@@ -65,8 +71,8 @@ renk sınıfları Tailwind'den gelir. Yeni düğmeye `px-6 py-3` yazmak yerine
 
 **Kalan iş (hepsi operasyon, kod değil — ayrıntısı `HANDOFF.md`'de):**
 
-1. **`supabase/etkinlik-takvimi.sql`'i çalıştır** (Dashboard → SQL Editor).
-   Sonunda doğrulama sorgusu var: 21 gün, 7 alan beklenir.
+1. **`supabase/dogrula-etkinlik-takvimi.sql`'i çalıştır** (Dashboard → SQL
+   Editor) ve dokuz satırın da `OK` döndüğünü gör.
 2. **QR kodlarını yazdır.** `/admin/qr` sayfasını **canlı domainden** aç ve yazdır — QR değerleri `window.location.origin` ile üretilir; yerelden yazdırılan kodlar `localhost`, Vercel preview dalından yazdırılanlar ise dal silinince ölen bir adres gösterir.
 3. **Canlıda bir kez dene:** rotada etkinlik rozeti (`/sihirbaz` → rota; Ulu Cami, Koza Han ve Kent Müzesi duraklarında bugüne ait rozet çıkmalı). Hiç test edilmedi.
 
