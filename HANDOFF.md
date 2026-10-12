@@ -61,7 +61,7 @@ puan, rozet, mekan ve kullanıcı verisine dokunmaz.
 - Rota sihirbazı → 6 duraklı rota, Leaflet haritası, 12:30'a otomatik yemek molası
 - QR check-in → Ulu Cami'de +50 puan verdi, header puanı güncelledi
 - Aynı QR ikinci kez okutulunca puan vermedi ("Bu mekandan puanını daha önce aldın")
-- `NEXT_PUBLIC_DEMO_SKIP_GEOFENCE=true` etkin, "Demo modu" etiketi görünüyor
+- `NEXT_PUBLIC_DEMO_SKIP_GEOFENCE=true` Vercel'de duruyor ama artık bir şeyi kapatmıyor: istemci konumu her zaman ister, karar sunucudaki `v_require_location` sabitinde (şu an `true`, yani konum zorunlu)
 - TR/EN dil anahtarı (header) — veritabanı değişikliği gerektirmez, hemen çalışır
 
 **Canlıda doğrulandı (11 Ekim):**

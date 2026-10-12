@@ -9,8 +9,9 @@
 --
 -- DEMO MODU: sahnede mekana 300 m yaklasilamayan bir sunum olursa asagidaki
 -- v_require_location degerini false yapip bu dosyayi tekrar calistirin.
--- NEXT_PUBLIC_DEMO_SKIP_GEOFENCE istemci tarafini susturur ama sunucuyu
--- etkilemez; ikisini birlikte kapatmak gerekir.
+-- Tek gercek anahtar budur. Istemci konumu her zaman ister;
+-- NEXT_PUBLIC_DEMO_SKIP_GEOFENCE yalnizca izin verilmezse istegin yine
+-- gonderilmesini saglar, yani bu satiri false yapmadan hicbir seyi acmaz.
 
 create or replace function public.check_in(p_token uuid,
                                p_lat double precision default null,

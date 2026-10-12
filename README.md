@@ -25,7 +25,7 @@ Puan, rozet ve kupon hesapları veritabanındaki `security definer` SQL fonksiyo
    ```
 5. `npm install && npm run dev` → http://localhost:3000
 
-> `NEXT_PUBLIC_DEMO_SKIP_GEOFENCE=true` iken check-in konum kontrolü atlanır (jüri salonunda mekana 300 m yakın olunamaz). Ekranda "demo modu" etiketi görünür.
+> `NEXT_PUBLIC_DEMO_SKIP_GEOFENCE=true` iken istemci konumu yine ister, ama izin verilmezse check-in isteğini konumsuz gönderir. Kontrolü gerçekten atlatan tek yer sunucudaki `check_in()` fonksiyonudur (`supabase/geofence.sql` → `v_require_location`). Kontrol atlandığında ekranda "demo modu" etiketi görünür.
 
 ## Vercel'e deploy
 

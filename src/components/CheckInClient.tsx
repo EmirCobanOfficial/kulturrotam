@@ -6,7 +6,19 @@ import { checkIn, type CheckInResult } from "@/lib/data";
 import { errorText } from "@/lib/errors";
 import { ensureSession, supabaseConfigured } from "@/lib/supabase/client";
 
-const SKIP_GEOFENCE = process.env.NEXT_PUBLIC_DEMO_SKIP_GEOFENCE === "true";
+/**
+ * Demo modu. Artık "konumu hiç sorma" demek DEĞİL: konum her zaman istenir,
+ * bu bayrak yalnızca izin verilmezse check-in'i yine denemeye yarar.
+ *
+ * Eskiden bayrak açıkken istemci konumu hiç sormuyor ve koordinatsız istek
+ * atıyordu; sunucudaki v_require_location = true kuralı da bunu reddediyordu.
+ * Yani iki anahtar ters durduğunda check-in hiç çalışmıyordu — üstelik bunu
+ * ancak QR'ı okutunca görüyordun. Artık ters duruş check-in'i kırmıyor:
+ * konum alınırsa sunucu mesafeyi kontrol eder, alınamazsa karar sunucunun
+ * (bkz. supabase/geofence.sql v_require_location).
+ */
+const DEMO_LOCATION_OPTIONAL =
+  process.env.NEXT_PUBLIC_DEMO_SKIP_GEOFENCE === "true";
 
 type Phase = "idle" | "ready" | "locating" | "sending" | "done" | "error";
 
@@ -39,21 +51,23 @@ export default function CheckInClient({ token }: { token: string }) {
       await ensureSession();
       let coords: { lat: number; lng: number } | undefined;
 
-      if (!SKIP_GEOFENCE) {
-        // Hatayı yutmuyoruz: konum reddedilince eskiden null gidiyordu ve
-        // sunucu mesafeyi hiç kontrol etmiyordu, yani izni reddetmek
-        // geofence'i atlamanın yolu oluyordu. Artık sunucu da reddediyor;
-        // burada da kullanıcıya ne yapması gerektiğini söylüyoruz.
-        if (!("geolocation" in navigator)) {
+      // Konumu her durumda istiyoruz. Hatayı yutmuyoruz: konum reddedilince
+      // eskiden null gidiyordu ve sunucu mesafeyi hiç kontrol etmiyordu, yani
+      // izni reddetmek geofence'i atlamanın yolu oluyordu. Artık sunucu da
+      // reddediyor; burada da kullanıcıya ne yapması gerektiğini söylüyoruz.
+      // Demo modunda konumsuz denemeye devam ediyoruz — kararı sunucu verir.
+      if (!("geolocation" in navigator)) {
+        if (!DEMO_LOCATION_OPTIONAL) {
           throw new Error(
             "Bu tarayıcı konum paylaşmıyor. Check-in için konum gerekli.",
           );
         }
+      } else {
         setPhase("locating");
         try {
           coords = await getCoords();
         } catch (err) {
-          throw new Error(geoMessage(err));
+          if (!DEMO_LOCATION_OPTIONAL) throw new Error(geoMessage(err));
         }
       }
 
