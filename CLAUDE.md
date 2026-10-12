@@ -10,6 +10,9 @@ Osmangazi Hackathon, Takım 13. Bursa/Osmangazi için kişiselleştirilmiş kül
 - Manuel rota (`/kendi-rotam`) → mekanları kendi sıranla ekle, ↑↓ ile sırala. Eklenen mekan en az yürüten konuma girer; sıra bozulursa "Sıralamayı kısalt" önerisi çıkar (`optimizeOrder`, en yakın komşu + 2-opt, ilk durak sabit)
 - Ana sayfa → hero, 3 alanlı hızlı başlangıç (sihirbaza taşınır), bugünün etkinlikleri, problem kartları (soru işareti çözümü açar), sponsorlar; scroll ile beliren `Reveal` animasyonları
 - Hakkımızda (`/hakkimizda`)
+- Sosyal etki programı (`/bursayla-ilk-bulusma`) → "Bursa'yla İlk Buluşma": ana sayfada özet bölüm, ayrıntı sayfası, bilet katkı kutusu (`TicketContribution`). Tutar henüz belirlenmedi, ekranda yer tutucu görünür — rakamı takım verecek.
+- Etkinlikler (`/etkinlikler`) → bugünün etkinlikleri + yönlendirme geliri ve bilet katkısı açıklamaları. **Arka uç yok**, gerçek affiliate linki yok; metinler modeli anlatıyor, gelecek zamanda yazıldı.
+- Mekanlar, puanlama ve yorum (`/mekanlar`) → 1-5 yıldız + kısa yorum, mekan başına ortalama. Yazma `add_review()` security definer fonksiyonundan geçer; kişi başına mekan başına tek değerlendirme, tekrar gönderim öncekini günceller.
 - QR check-in (`/checkin/[token]`) → puan + rozet; aynı mekandan ikinci puan yok
 - Ödül cüzdanı (`/oduller`) → puan düşer, kupon kodu üretilir; puan yetmezse reddedilir
 - Profil (`/profil`), QR yazdırma sayfası (`/admin/qr`)
@@ -32,9 +35,9 @@ Dosya idempotent, tekrar çalıştırılabilir. Tek uyarı: 125. satır `delete 
 
 **12 Ekim'de canlıda doğrulandı:** `/oduller` kupon alma (sarı ve yeşil sekme).
 
-**`supabase/reviews.sql` ÇALIŞTIRILMADI.** Mekan puanlama ve yorum (`/mekanlar`) bu göçü bekliyor: `reviews` tablosu + `add_review()` fonksiyonu. Çalıştırılana kadar sayfa "henüz açık değil" mesajı gösterir, başka hiçbir şeyi etkilemez. Dosya ASCII ve idempotent.
+**`supabase/reviews.sql` çalıştırıldı** (12 Ekim). `reviews` tablosu ve `add_review()` fonksiyonu veritabanında. Kişi başına mekan başına tek değerlendirme; tekrar gönderim yeni satır açmaz, mevcut satırı günceller.
 
-**Canlıda hâlâ denenmedi:** rotadaki etkinlik rozeti, `/mekanlar` puanlama ve yorum.
+**Canlıda hâlâ denenmedi:** rotadaki etkinlik rozeti, `/mekanlar` puanlama ve yorum arayüzü. `/mekanlar` "henüz açık değil" diyorsa göç uygulanmamış demektir.
 
 **Sahiplik (12 Ekim, üç kişi paralel çalışıyor):** puan ve ödül tarafı ekipten bir arkadaşa devredildi — `profiles.points`, `coupons`, `redeem_coupon` ve `/oduller` ona ait. O alana dokunmadan önce onunla konuş, yoksa aynı anda iki kişi aynı mantığı yazar.
 
@@ -48,7 +51,7 @@ Birden fazla kişi aynı anda çalışıyorsa `KATKI.md`'yi oku: dal açma, şem
 ## Mimari kuralları
 
 - Next.js App Router + TypeScript + Tailwind. Ayrı API katmanı yok: istemci doğrudan Supabase'e konuşur.
-- Puan, rozet ve kupon harcaması **veritabanındaki `security definer` fonksiyonlarında** yapılır (`check_in`, `redeem_coupon`, `set_nickname`). Bu mantığı istemciye taşıma — sahnede yanlış puan çıkmasın.
+- Puan, rozet, kupon harcaması ve değerlendirme **veritabanındaki `security definer` fonksiyonlarında** yapılır (`check_in`, `redeem_coupon`, `set_nickname`, `add_review`). Bu mantığı istemciye taşıma — sahnede yanlış puan çıkmasın.
 - Tüm tablolarda RLS açık; istemciye hiçbir tabloda `insert`/`update` yetkisi verilmez. Tek istisna `storage.objects`: fotoğraf yüklemek için gerekli, istemci yalnızca kendi `auth.uid()` klasörüne yazabilir. `photos` satırını yine `add_photo()` oluşturur.
 - Anonim oturum temel durumdur: `ensureSession()` her zaman bir oturum açar, kayıt onu yükseltir. Kayıt akışını `signIn`/`signUp` yerine yeni bir kullanıcı yaratacak şekilde değiştirme — puanlar kaybolur.
 - Arayüz metinleri `src/lib/i18n.ts` sözlüğünde; bileşene düz Türkçe string gömme, `t("...")` kullan.

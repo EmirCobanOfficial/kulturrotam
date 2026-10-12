@@ -23,7 +23,12 @@ alır. Uygulama canlıda çalışıyor; kalan iş demoyu sahneye hazırlamak ve 
 | Vercel deploy + `main`'e push ile otomatik yayın | ✅ çalışıyor |
 | TR/EN dil anahtarı | ✅ canlıda çalışıyor, veritabanı gerektirmiyor |
 | Kayıt / giriş (`/giris`) | ✅ canlıda doğrulandı: kayıt, e-posta doğrulama, çıkış, tekrar giriş |
-| Fotoğraf akışı + etkinlik takvimi | ✅ `roadmap.sql` çalıştırıldı, Akış linki açıldı — **canlı test bekliyor** |
+| Fotoğraf akışı + etkinlik takvimi | ✅ canlıda doğrulandı |
+| Ödüller: sarı (puanla al) / yeşil (bağışa çevir) | ✅ `rewards.sql` çalıştırıldı, canlıda doğrulandı |
+| Ana sayfa, Hakkımızda, scroll animasyonları | ✅ canlıda |
+| Manuel rota (`/kendi-rotam`) + sıralama optimizasyonu | ✅ canlıda; sihirbaz rotası da artık kendi üstünden geçmiyor |
+| Sosyal etki programı (`/bursayla-ilk-bulusma`) | ✅ canlıda; katkı tutarı rakamı bekliyor |
+| Mekan puanlama ve yorum (`/mekanlar`) | ✅ `reviews.sql` çalıştırıldı — **canlı test bekliyor** |
 | QR kodlarının basılı hali | ⛔ canlı domainden yazdırılmadı |
 | Bağımlılık açığı (Dependabot) | ✅ incelendi, demoyu etkilemiyor, bilinçli bırakıldı |
 
@@ -85,6 +90,8 @@ akışı (kayıt, kupon) canlıda bir kez denemek.
 | Dosya | Neden önemli |
 |------|---------------|
 | `CLAUDE.md` | Projenin tek doğruluk kaynağı: durum, mimari kuralları, tuzaklar. `GEMINI.md` buna symlink. |
+| `supabase/reviews.sql` | **Çalıştırıldı (12 Ekim).** `reviews` tablosu + `add_review()`. Idempotent, ASCII. |
+| `supabase/rewards.sql` | **Çalıştırıldı (12 Ekim).** Kuponlara `kind` + `image_url`, dokuz ödül/bağış kartı. |
 | `supabase/roadmap.sql` | **Çalıştırıldı (11 Ekim).** `events`, `photos`, `photo_votes` tabloları + `photos` bucket'ı. Idempotent; tekrar çalıştırılabilir, ama 125. satır kendi seed etkinliklerini silip yeniden ekler. |
 | `supabase/schema.sql` | Ana şema + `security definer` fonksiyonları (`check_in`, `redeem_coupon`, `set_nickname`). |
 | `src/lib/supabase/client.ts` | Oturum yönetimi: `ensureSession`, `signUp`, `signIn`, `signOut`, `accountState`. |
