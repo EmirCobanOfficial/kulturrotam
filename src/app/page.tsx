@@ -11,7 +11,6 @@ import type { EventItem, Place } from "@/lib/types";
 
 // Sihirbazdaki listeyle birebir aynı olmalı: seçim oraya parametre olarak taşınıyor.
 const INTERESTS = ["tarihi", "muze", "mimari", "manzara", "alisveris", "bahce"] as const;
-const HOURS = [2, 3, 4, 6] as const;
 /** Önümüzdeki iki hafta: "haftaya çarşamba oradayım" sorusu bu aralığa düşer. */
 const DAYS = 14;
 
@@ -25,7 +24,6 @@ export default function Home() {
 
   // Hızlı başlangıç çubuğu: seçimler sihirbaza sorgu parametresi olarak taşınır.
   const [interest, setInterest] = useState<string>(INTERESTS[0]);
-  const [hours, setHours] = useState<number>(3);
   const [wantsFood, setWantsFood] = useState(true);
   const [dayIndex, setDayIndex] = useState(0);
 
@@ -47,14 +45,13 @@ export default function Home() {
   }, [selectedDay]);
 
   /**
-   * Hızlı başlangıç çubuğu doğrudan rotaya gider, sihirbaza değil: dört soruyu
-   * burada sorduk, sihirbaz aynı şeyleri tekrar sormamalı. Sormadığımız iki
-   * alan varsayılanla gider — başlangıç 10:00, bütçe orta. Hepsini tek tek
-   * ayarlamak isteyen "Rotanı Oluştur" ile sihirbaza gidiyor.
+   * Çubuk tarihi, ilgi alanını ve yemek molasını alır; saati ve bütçeyi
+   * sihirbaz sorar. Burada sorulanlar sihirbazda hazır gelir, kullanıcı
+   * aynı soruyu iki kez cevaplamaz.
    */
-  const routeHref =
-    `/rota?start=10&budget=2&interests=${interest}&hours=${hours}` +
-    `&food=${wantsFood ? 1 : 0}&date=${toISODate(selectedDay)}`;
+  const wizardHref =
+    `/sihirbaz?interests=${interest}&food=${wantsFood ? 1 : 0}` +
+    `&date=${toISODate(selectedDay)}`;
 
   const cards = [
     { label: t("home_card_culture"), href: "/sihirbaz", from: "from-brand" },
@@ -95,7 +92,7 @@ export default function Home() {
 
       {/* ------------------------------------------------- hızlı başlangıç çubuğu */}
       <Reveal>
-        <div className="grid gap-3 rounded-2xl border border-line bg-surface p-4 shadow-sm sm:grid-cols-2 lg:grid-cols-[1fr_1fr_1fr_1fr_auto]">
+        <div className="grid gap-3 rounded-2xl border border-line bg-surface p-4 shadow-sm sm:grid-cols-2 lg:grid-cols-[1fr_1fr_1fr_auto]">
           <label className="block">
             <span className="text-xs font-semibold text-muted">{t("home_quick_date")}</span>
             <select
@@ -127,21 +124,6 @@ export default function Home() {
           </label>
 
           <label className="block">
-            <span className="text-xs font-semibold text-muted">{t("home_quick_time")}</span>
-            <select
-              value={hours}
-              onChange={(e) => setHours(Number(e.target.value))}
-              className="mt-1 w-full rounded-lg border border-line bg-surface px-3 py-2 font-semibold"
-            >
-              {HOURS.map((h) => (
-                <option key={h} value={h}>
-                  {h} {lang === "tr" ? "saat" : "hours"}
-                </option>
-              ))}
-            </select>
-          </label>
-
-          <label className="block">
             <span className="text-xs font-semibold text-muted">{t("wizard_meal")}</span>
             <select
               value={wantsFood ? "1" : "0"}
@@ -154,7 +136,7 @@ export default function Home() {
           </label>
 
           <Link
-            href={routeHref}
+            href={wizardHref}
             className="flex items-center justify-center rounded-lg bg-accent px-6 py-2 font-semibold text-white hover:opacity-90 sm:mt-5"
           >
             {t("home_quick_cta")} →
