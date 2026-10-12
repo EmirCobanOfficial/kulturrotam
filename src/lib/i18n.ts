@@ -233,8 +233,10 @@ const DICT = {
     bg_cta1: "Planlanan Gezileri İncele",
 
     ev_title: "Keşif etkinlikleri",
-    ev_lead: "Belediye takviminden bugüne ait başlıklar ve rotaya eklenebilecek keşif etkinlikleri.",
-    ev_empty: "Bugün için kayıtlı etkinlik yok.",
+    ev_lead: "Haftanın her günü, her ilgi alanı için bir etkinlik. Günü seç, alana göre süz, beğendiğini rotana ekle.",
+    ev_empty: "Seçilen gün ve alan için kayıtlı etkinlik yok.",
+    ev_filter_area: "Alan",
+    ev_filter_all: "Tümü",
     ev_on_route: "Rotanda gör",
     ev_tickets: "Bilet al",
 
@@ -463,8 +465,10 @@ const DICT = {
     bg_cta1: "See the planned trips",
 
     ev_title: "Discovery events",
-    ev_lead: "Today's entries from the municipal calendar, and discovery events you can add to a route.",
-    ev_empty: "No events listed for today.",
+    ev_lead: "One event for every interest, every day of the week. Pick a day, filter by area, add what you like to your route.",
+    ev_empty: "Nothing listed for the selected day and area.",
+    ev_filter_area: "Area",
+    ev_filter_all: "All",
     ev_on_route: "See it on your route",
     ev_tickets: "Get tickets",
 
@@ -532,22 +536,53 @@ export const CATEGORY_LABEL: Record<Lang, Record<string, string>> = {
   en: { tarihi: "Historic", muze: "Museum", yemek: "Food", park: "Park" },
 };
 
+/**
+ * Sihirbazdaki ve ana sayfadaki ilgi alanları. Anahtarlar mekanların
+ * `category` veya `tags` değerleriyle eşleşmek zorunda (bkz. route/plan.ts
+ * `score`) — yeni bir anahtar eklerken mekanlara da etiketini ekle, yoksa
+ * seçenek hiçbir rotayı etkilemez.
+ */
 export const INTEREST_LABEL: Record<Lang, Record<string, string>> = {
   tr: {
     tarihi: "Tarihi mekanlar",
     muze: "Müzeler",
-    mimari: "Mimari",
+    kulturel: "Kültürel",
+    "konser-sinema": "Konserler ve sinema",
     manzara: "Manzara & fotoğraf",
     alisveris: "Çarşı & alışveriş",
-    bahce: "Park & bahçe",
   },
   en: {
     tarihi: "Historic sites",
     muze: "Museums",
-    mimari: "Architecture",
+    kulturel: "Cultural",
+    "konser-sinema": "Concerts and cinema",
     manzara: "Views & photos",
     alisveris: "Bazaar & shopping",
-    bahce: "Parks & gardens",
+  },
+};
+
+/**
+ * Etkinlik alanları: ilgi alanlarının kısa adı + yemek. Etkinlik kartındaki
+ * etiket ve /etkinlikler süzgeci bunu kullanır.
+ */
+export const AREA_LABEL: Record<Lang, Record<string, string>> = {
+  tr: {
+    tarihi: "Tarihi",
+    muze: "Müze",
+    kulturel: "Kültürel",
+    "konser-sinema": "Konser & sinema",
+    manzara: "Manzara",
+    alisveris: "Çarşı",
+    yemek: "Yemek",
+  },
+  en: {
+    tarihi: "Historic",
+    muze: "Museum",
+    kulturel: "Cultural",
+    "konser-sinema": "Concert & cinema",
+    manzara: "Views",
+    alisveris: "Bazaar",
+    yemek: "Food",
   },
 };
 

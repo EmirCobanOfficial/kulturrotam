@@ -95,6 +95,12 @@ export type EventItem = {
   image_url: string | null;
   /** Bilet/yönlendirme bağlantısı. Gerçek link gelene kadar null. */
   ticket_url: string | null;
+  /**
+   * Etkinliğin ilgi alanı: tarihi | muze | kulturel | konser-sinema |
+   * manzara | alisveris | yemek. Belediye takviminden gelen eski satırlarda
+   * boş olabilir; o zaman kartta etiket çizilmez.
+   */
+  area: string | null;
 };
 
 export type Photo = {

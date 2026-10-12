@@ -73,7 +73,7 @@ export default function TogetherPage() {
           <p className="text-xl font-semibold">{t("bg_lead")}</p>
           <Link
             href="/etkinlikler"
-            className="mt-7 inline-block rounded-full bg-white px-6 py-3 font-semibold text-brand hover:opacity-90"
+            className="btn rounded-full mt-7 bg-white text-brand hover:opacity-90"
           >
             {t("bg_cta1")} →
           </Link>

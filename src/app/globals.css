@@ -48,3 +48,37 @@ body {
 .stop-pin--meal {
   background: var(--accent);
 }
+
+/*
+  Düğme ölçüsü tek yerden geliyor: sayfalar arasında aynı yükseklik ve dolgu.
+  Renk, kenar ve gölge sınıfları Tailwind'den gelmeye devam eder — burada
+  yalnızca ölçü var, böylece "bu düğme neden daha büyük" sorusu çıkmıyor.
+  Köşe yuvarlaması sınıfta değil: `.btn rounded-full` çoğu yerde, hızlı
+  başlangıç çubuğunda ise yanındaki kutularla uyması için `rounded-lg`.
+*/
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.75rem; /* 44px: dokunma hedefi */
+  padding-inline: 1.5rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+/*
+  Sihirbazdaki seçenek kartları. Adımlar arasında yükseklik değişmesin diye
+  ölçü sabit: iki satırlık bütçe kartı ile tek satırlık ilgi kartı aynı yeri
+  kaplar.
+*/
+.choice {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 4.75rem;
+  padding: 0.75rem 1rem;
+  border-radius: 0.75rem;
+  border-width: 1px;
+  text-align: left;
+}

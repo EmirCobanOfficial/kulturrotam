@@ -11,7 +11,7 @@ Osmangazi Hackathon, Takım 13. Bursa/Osmangazi için kişiselleştirilmiş kül
 - Ana sayfa → hero, 3 alanlı hızlı başlangıç (sihirbaza taşınır), bugünün etkinlikleri, problem kartları (soru işareti çözümü açar), sponsorlar; scroll ile beliren `Reveal` animasyonları
 - Hakkımızda (`/hakkimizda`)
 - Sosyal etki programı (`/bursayla-ilk-bulusma`) → "Bursa'yla İlk Buluşma": ana sayfada özet bölüm, ayrıntı sayfası, bilet katkı kutusu (`TicketContribution`). Tutar henüz belirlenmedi, ekranda yer tutucu görünür — rakamı takım verecek.
-- Etkinlikler (`/etkinlikler`) → bugünün etkinlikleri + yönlendirme geliri ve bilet katkısı açıklamaları. **Arka uç yok**, gerçek affiliate linki yok; metinler modeli anlatıyor, gelecek zamanda yazıldı.
+- Etkinlikler (`/etkinlikler`) → gün seçimi (önümüzdeki iki hafta) + alan süzgeci; her gün yedi alanın (tarihi, müze, kültürel, konser & sinema, manzara, çarşı, yemek) her birinde bir etkinlik var. Yönlendirme geliri ve bilet katkısı açıklamaları duruyor; **arka uç yok**, gerçek affiliate linki yok; metinler modeli anlatıyor, gelecek zamanda yazıldı.
 - Mekanlar, puanlama ve yorum (`/mekanlar`) → 1-5 yıldız + kısa yorum, mekan başına ortalama. Yazma `add_review()` security definer fonksiyonundan geçer; kişi başına mekan başına tek değerlendirme, tekrar gönderim öncekini günceller.
 - QR check-in (`/checkin/[token]`) → puan + rozet; aynı mekandan ikinci puan yok
 - Ödül cüzdanı (`/oduller`) → puan düşer, kupon kodu üretilir; puan yetmezse reddedilir
@@ -41,10 +41,34 @@ Dosya idempotent, tekrar çalıştırılabilir. Tek uyarı: 125. satır `delete 
 
 **Sahiplik (12 Ekim, üç kişi paralel çalışıyor):** puan ve ödül tarafı ekipten bir arkadaşa devredildi — `profiles.points`, `coupons`, `redeem_coupon` ve `/oduller` ona ait. O alana dokunmadan önce onunla konuş, yoksa aynı anda iki kişi aynı mantığı yazar.
 
+**`supabase/etkinlik-takvimi.sql` HENÜZ ÇALIŞTIRILMADI (12 Ekim).** Etkinlik
+takvimini üç haftaya ve yedi alana yayıyor: `events.area` kolonunu ekler, yeni
+ilgi alanlarının mekan etiketlerini (`kulturel`, `konser-sinema`) yazar ve
+`source = 'kesif'` etkinliklerini yeniden üretir. `etkinlikler.sql`'in tek
+günlük etkinliklerinin yerini alır — o dosya yalnızca `image_url` /
+`ticket_url` kolonları için hâlâ gerekli. İdempotent; puan, rozet ve kullanıcı
+verisine dokunmaz. Çalıştırmadan önce `/etkinlikler` yalnızca bugünü gösterir
+ve sihirbazdaki **Kültürel** / **Konserler ve sinema** seçenekleri rotayı
+değiştirmez (mekanlarda etiketleri yok).
+
+**İlgi alanları değişti (12 Ekim):** sihirbaz ve ana sayfadaki hızlı başlangıç
+artık `tarihi, muze, kulturel, konser-sinema, manzara, alisveris` soruyor —
+Mimari ve Park & bahçe kaldırıldı. İki liste **birebir aynı kalmalı**, seçim
+ana sayfadan sihirbaza sorgu parametresiyle taşınıyor. Yeni bir ilgi alanı
+eklerken mekanlara da etiketini ekle: rota motoru anahtarı `category` + `tags`
+içinde arar, etiketsiz seçenek hiçbir rotayı etkilemez.
+
+**Düğme ölçüsü tek yerden:** `globals.css` içindeki `.btn` (pill düğmeler) ve
+`.choice` (sihirbaz seçenek kartları) sınıfları yüksekliği ve dolguyu tutar;
+renk sınıfları Tailwind'den gelir. Yeni düğmeye `px-6 py-3` yazmak yerine
+`.btn` ver, yoksa sayfada boy farkı çıkar.
+
 **Kalan iş (hepsi operasyon, kod değil — ayrıntısı `HANDOFF.md`'de):**
 
-1. **QR kodlarını yazdır.** `/admin/qr` sayfasını **canlı domainden** aç ve yazdır — QR değerleri `window.location.origin` ile üretilir; yerelden yazdırılan kodlar `localhost`, Vercel preview dalından yazdırılanlar ise dal silinince ölen bir adres gösterir.
-2. **Canlıda bir kez dene:** rotada etkinlik rozeti (`/sihirbaz` → rota; Ulu Cami, Koza Han ve Kent Müzesi duraklarında bugüne ait rozet çıkmalı). Hiç test edilmedi.
+1. **`supabase/etkinlik-takvimi.sql`'i çalıştır** (Dashboard → SQL Editor).
+   Sonunda doğrulama sorgusu var: 21 gün, 7 alan beklenir.
+2. **QR kodlarını yazdır.** `/admin/qr` sayfasını **canlı domainden** aç ve yazdır — QR değerleri `window.location.origin` ile üretilir; yerelden yazdırılan kodlar `localhost`, Vercel preview dalından yazdırılanlar ise dal silinince ölen bir adres gösterir.
+3. **Canlıda bir kez dene:** rotada etkinlik rozeti (`/sihirbaz` → rota; Ulu Cami, Koza Han ve Kent Müzesi duraklarında bugüne ait rozet çıkmalı). Hiç test edilmedi.
 
 Birden fazla kişi aynı anda çalışıyorsa `KATKI.md`'yi oku: dal açma, şema değişikliği ve puan mantığına dokunma kuralları orada.
 

@@ -17,7 +17,7 @@ insert into public.places
   (slug, name_tr, name_en, category, lat, lng, visit_minutes, cost_level,
    open_hour, close_hour, tags, description_tr, points_reward, sort_order)
 values
-  ('zindan-kapi', 'Zindan Kap' || chr(305), 'Zindan Gate', 'tarihi', 40.1829, 29.0598, 20, 0, 0, 24, '{tarihi,mimari}', 'Bursa Hisar surlar' || chr(305) || 'n' || chr(305) || 'n ayakta kalan kap' || chr(305) || 'lar' || chr(305) || 'ndan biri; Tophane''ye ' || chr(231) || chr(305) || 'kan tarihi yol burada ba' || chr(351) || 'lar.', 40, 15),
+  ('zindan-kapi', 'Zindan Kap' || chr(305), 'Zindan Gate', 'tarihi', 40.1829, 29.0598, 20, 0, 0, 24, '{tarihi,mimari,manzara}', 'Bursa Hisar surlar' || chr(305) || 'n' || chr(305) || 'n ayakta kalan kap' || chr(305) || 'lar' || chr(305) || 'ndan biri; Tophane''ye ' || chr(231) || chr(305) || 'kan tarihi yol burada ba' || chr(351) || 'lar.', 40, 15),
   ('ulku-pastanesi', chr(220) || 'lk' || chr(252) || ' Pastanesi', 'Ulku Patisserie', 'yemek', 40.1872, 29.0556, 25, 1, 8, 22, '{yemek}', 'Bursa''n' || chr(305) || 'n k' || chr(246) || 'kl' || chr(252) || ' pastanelerinden; ' || chr(351) || 'ehrin klasik tatl' || chr(305) || ' molas' || chr(305) || '.', 40, 16),
   ('dervisan-gazoz', 'Dervi' || chr(351) || 'an Gazoz', 'Dervisan Soda', 'yemek', 40.1841, 29.0612, 20, 1, 10, 22, '{yemek}', 'Yerel gazozuyla bilinen, ' || chr(351) || 'ehrin kendi lezzetini tadabilece' || chr(287) || 'in k' || chr(252) || chr(231) || chr(252) || 'k durak.', 40, 17)
 on conflict (slug) do update set

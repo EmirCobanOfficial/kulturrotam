@@ -100,6 +100,7 @@ function event(placeId: string): EventItem {
     source: "belediye",
     image_url: null,
     ticket_url: null,
+    area: null,
   };
 }
 
@@ -202,6 +203,7 @@ describe("planManualRoute", () => {
       source: "belediye",
       image_url: null,
       ticket_url: null,
+      area: null,
     };
 
     const [stop] = planManualRoute([p], 10, [event]);

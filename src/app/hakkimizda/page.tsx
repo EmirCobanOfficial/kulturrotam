@@ -78,7 +78,7 @@ export default function AboutPage() {
           <p className="mt-3 max-w-2xl text-muted">{t("about_closing")}</p>
           <Link
             href="/sihirbaz"
-            className="mt-7 inline-block rounded-full bg-accent px-6 py-3 font-semibold text-white hover:opacity-90"
+            className="btn rounded-full mt-7 bg-accent text-white hover:opacity-90"
           >
             {t("home_hero_secondary")} →
           </Link>

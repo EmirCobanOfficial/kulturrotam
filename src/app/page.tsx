@@ -14,10 +14,10 @@ import type { EventItem, Place } from "@/lib/types";
 const INTERESTS = [
   "tarihi",
   "muze",
-  "mimari",
+  "kulturel",
+  "konser-sinema",
   "manzara",
   "alisveris",
-  "bahce",
 ] as const;
 /** Önümüzdeki iki hafta: "haftaya çarşamba oradayım" sorusu bu aralığa düşer. */
 const DAYS = 14;
@@ -132,7 +132,7 @@ export default function Home() {
             <div className="mt-8 flex flex-wrap items-center gap-4">
               <Link
                 href="/sihirbaz"
-                className="rounded-full bg-accent px-7 py-3 font-semibold text-white hover:opacity-90"
+                className="btn rounded-full bg-accent text-white hover:opacity-90"
               >
                 {t("home_hero_cta")} →
               </Link>
@@ -200,7 +200,7 @@ export default function Home() {
 
           <Link
             href={wizardHref}
-            className="flex items-center justify-center rounded-lg bg-accent px-6 py-2 font-semibold text-white hover:opacity-90 sm:mt-5"
+            className="btn rounded-lg bg-accent text-white hover:opacity-90 sm:mt-5"
           >
             {t("home_quick_cta")} →
           </Link>
@@ -295,7 +295,7 @@ export default function Home() {
           <p className="mt-4 max-w-2xl text-white/80">{t("home_solo_body")}</p>
           <Link
             href="/kendi-rotam"
-            className="mt-7 inline-block rounded-full bg-white px-6 py-3 font-semibold text-brand hover:opacity-90"
+            className="btn rounded-full mt-7 bg-white text-brand hover:opacity-90"
           >
             {t("home_solo_cta")} →
           </Link>
@@ -313,7 +313,7 @@ export default function Home() {
           <p className="mt-3 max-w-2xl text-green-900/80">{t("si_p3")}</p>
           <Link
             href="/bursayla-ilk-bulusma"
-            className="mt-7 inline-block rounded-full bg-green-700 px-6 py-3 font-semibold text-white hover:opacity-90"
+            className="btn rounded-full mt-7 bg-green-700 text-white hover:opacity-90"
           >
             {t("si_cta")} →
           </Link>

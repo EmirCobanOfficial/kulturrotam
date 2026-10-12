@@ -72,7 +72,7 @@ export default function FirstMeetingPage() {
           <div className="mt-7 flex flex-wrap gap-3">
             <Link
               href="/etkinlikler"
-              className="rounded-full bg-white px-6 py-3 font-semibold text-brand hover:opacity-90"
+              className="btn rounded-full bg-white text-brand hover:opacity-90"
             >
               {t("bib_cta1")} →
             </Link>

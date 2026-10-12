@@ -14,31 +14,31 @@ insert into public.places
    open_hour, close_hour, tags, description_tr, points_reward, sort_order)
 values
   ('panorama-1326', 'Panorama 1326 Bursa Fetih Müzesi', 'Panorama 1326 Conquest Museum',
-   'muze', 40.1864178, 29.0751579, 60, 2, 9, 18, '{tarih,muze,aile}',
+   'muze', 40.1864178, 29.0751579, 60, 2, 9, 18, '{tarih,muze,aile,kulturel}',
    'Bursa''nın fethini 360 derece panoramik tabloyla anlatan müze. Şehrin hikâyesine buradan başlamak en kolayı.', 60, 1),
 
   ('ulu-cami', 'Ulu Cami', 'Grand Mosque',
-   'tarihi', 40.1834633, 29.0617892, 30, 0, 8, 20, '{tarih,mimari,ucretsiz}',
+   'tarihi', 40.1834633, 29.0617892, 30, 0, 8, 20, '{tarih,mimari,kulturel,ucretsiz}',
    '1399 tarihli, 20 kubbeli ulu cami. İçindeki şadırvan ve hat levhaları mutlaka görülmeli.', 50, 2),
 
   ('kapali-carsi', 'Kapalıçarşı ve Kestane Şekeri Durağı', 'Covered Bazaar',
-   'yemek', 40.1842000, 29.0622000, 25, 1, 9, 19, '{tatli,hediyelik,yerel-esnaf}',
+   'yemek', 40.1842000, 29.0622000, 25, 1, 9, 19, '{tatli,hediyelik,alisveris,yerel-esnaf}',
    'Kestane şekeri, lokum ve hediyelik için kısa mola. Yerel esnafın yoğun olduğu hat.', 40, 3),
 
   ('koza-han', 'Koza Han', 'Silk Cocoon Caravanserai',
-   'tarihi', 40.1844464, 29.0632519, 40, 1, 9, 20, '{tarih,ipek,cay,alisveris}',
+   'tarihi', 40.1844464, 29.0632519, 40, 1, 9, 20, '{tarih,ipek,cay,alisveris,kulturel,konser-sinema}',
    'İpek ticaretinin kalbi. Avlusundaki çay bahçesinde oturup ipek dükkanlarını gezin.', 50, 4),
 
   ('pirinc-han', 'Pirinç Han', 'Rice Caravanserai',
-   'tarihi', 40.1857239, 29.0602794, 25, 1, 9, 19, '{tarih,zanaat,kahve}',
+   'tarihi', 40.1857239, 29.0602794, 25, 1, 9, 19, '{tarih,zanaat,kahve,kulturel}',
    'II. Bayezid dönemi hanı; bugün zanaatkâr atölyeleri ve kahvecilerle dolu.', 40, 5),
 
   ('kent-muzesi', 'Bursa Kent Müzesi', 'Bursa City Museum',
-   'muze', 40.1823869, 29.0664373, 50, 1, 9, 17, '{muze,tarih,aile}',
+   'muze', 40.1823869, 29.0664373, 50, 1, 9, 17, '{muze,tarih,aile,kulturel,konser-sinema}',
    'Eski adliye binasında şehrin 8 bin yılı: canlandırmalar, el sanatları ve Bursa mutfağı bölümü.', 50, 6),
 
   ('tophane-saat-kulesi', 'Tophane Parkı ve Saat Kulesi', 'Tophane Park and Clock Tower',
-   'park', 40.1863000, 29.0568000, 30, 0, 7, 23, '{manzara,ucretsiz,fotograf}',
+   'park', 40.1863000, 29.0568000, 30, 0, 7, 23, '{manzara,ucretsiz,fotograf,konser-sinema}',
    'Şehre tepeden bakan sur parkı. Gün batımında Bursa ovasının en iyi göründüğü yer.', 50, 7),
 
   ('osman-orhan-turbeleri', 'Osman ve Orhan Gazi Türbeleri', 'Tombs of Osman and Orhan Gazi',
@@ -46,7 +46,7 @@ values
    'Osmanlı''nın kurucu iki padişahının türbesi, Tophane Parkı''nın hemen içinde.', 50, 8),
 
   ('irgandi-koprusu', 'Irgandı Köprüsü', 'Irgandi Bridge',
-   'tarihi', 40.1819246, 29.0708487, 30, 1, 9, 20, '{tarih,zanaat,alisveris}',
+   'tarihi', 40.1819246, 29.0708487, 30, 1, 9, 20, '{tarih,zanaat,alisveris,kulturel,konser-sinema}',
    'Üzerinde dükkanlar bulunan dünyadaki sayılı çarşı köprülerinden biri.', 50, 9),
 
   ('sakarya-caddesi', 'Sakarya Caddesi Yemek Hattı', 'Sakarya Street Food Row',
@@ -54,7 +54,7 @@ values
    'İskender''den balık-ekmeğe uzanan esnaf lokantaları hattı. Akşam yemeği için en canlı sokak.', 40, 10),
 
   ('muradiye-kulliyesi', 'Muradiye Külliyesi', 'Muradiye Complex',
-   'tarihi', 40.1910633, 29.0465006, 45, 0, 8, 19, '{tarih,mimari,bahce,ucretsiz}',
+   'tarihi', 40.1910633, 29.0465006, 45, 0, 8, 19, '{tarih,mimari,bahce,kulturel,ucretsiz}',
    'Cami, medrese ve 12 şehzade türbesinden oluşan sakin külliye; bahçesi dinlenmek için ideal.', 60, 11);
 
 insert into public.badges (slug, name_tr, icon, rule) values

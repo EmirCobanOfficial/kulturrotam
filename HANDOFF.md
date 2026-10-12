@@ -29,12 +29,29 @@ alır. Uygulama canlıda çalışıyor; kalan iş demoyu sahneye hazırlamak ve 
 | Manuel rota (`/kendi-rotam`) + sıralama optimizasyonu | ✅ canlıda; sihirbaz rotası da artık kendi üstünden geçmiyor |
 | Sosyal etki programı (`/bursayla-ilk-bulusma`) | ✅ canlıda; katkı tutarı rakamı bekliyor |
 | Mekan puanlama ve yorum (`/mekanlar`) | ✅ `reviews.sql` çalıştırıldı — **canlı test bekliyor** |
+| Etkinlik takvimi: her gün, her alan | ⛔ `supabase/etkinlik-takvimi.sql` **çalıştırılmadı** |
 | QR kodlarının basılı hali | ⛔ canlı domainden yazdırılmadı |
 | Bağımlılık açığı (Dependabot) | ✅ incelendi, demoyu etkilemiyor, bilinçli bırakıldı |
 
 Kısaca: **demonun kendisi ayakta ve canlıda doğrulanmış durumda.** Kalan işler
 kod yazmak değil, operasyon: bir SQL dosyasını çalıştırmak, QR'ları basmak ve iki
 akışı (kayıt, kupon) canlıda bir kez denemek.
+
+### Çalıştırılacak tek dosya: `supabase/etkinlik-takvimi.sql`
+
+Dashboard → SQL Editor → dosyanın tamamını yapıştır → Run. Dosya tamamen ASCII,
+panodan yapıştırmak güvenli. Yaptıkları:
+
+1. `events` tablosuna `area` kolonu ekler (etkinliğin ilgi alanı).
+2. Mekanlara yeni ilgi etiketlerini yazar (`kulturel`, `konser-sinema`, ayrıca
+   Kapalıçarşı'ya `alisveris`, Zindan Kapı'ya `manzara`). Bu olmadan
+   sihirbazdaki **Kültürel** ve **Konserler ve sinema** seçenekleri rotayı
+   değiştirmez.
+3. `source = 'kesif'` etkinliklerini silip bugünden itibaren 21 güne,
+   yedi alana yayarak yeniden üretir — her gün her alanda bir etkinlik.
+
+Sonunda doğrulama sorgusu çalışır: **21 gün, 7 alan** beklenir. İdempotent;
+puan, rozet, mekan ve kullanıcı verisine dokunmaz.
 
 ## Şu Anki Durum
 

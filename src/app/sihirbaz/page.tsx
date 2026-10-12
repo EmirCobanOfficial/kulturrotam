@@ -5,7 +5,9 @@ import { useEffect, useState } from "react";
 import { BUDGET_LABEL, INTEREST_LABEL, useLang } from "@/lib/i18n";
 import type { RoutePrefs } from "@/lib/types";
 
-const INTERESTS = ["tarihi", "muze", "mimari", "manzara", "alisveris", "bahce"];
+// Ana sayfadaki hızlı başlangıç çubuğundaki listeyle birebir aynı olmalı:
+// seçim oraya sorgu parametresi olarak taşınıyor.
+const INTERESTS = ["tarihi", "muze", "kulturel", "konser-sinema", "manzara", "alisveris"];
 
 const BUDGETS = [0, 1, 2, 3];
 
@@ -99,7 +101,7 @@ export default function WizardPage() {
               <button
                 key={id}
                 onClick={() => toggleInterest(id)}
-                className={`rounded-xl border p-4 text-left text-sm font-medium transition ${
+                className={`choice text-sm font-medium transition ${
                   active
                     ? "border-brand bg-brand-soft text-brand"
                     : "border-line bg-surface hover:border-brand"
@@ -122,7 +124,7 @@ export default function WizardPage() {
               <button
                 key={value}
                 onClick={() => setBudget(value)}
-                className={`rounded-xl border p-4 text-left transition ${
+                className={`choice transition ${
                   active
                     ? "border-brand bg-brand-soft"
                     : "border-line bg-surface hover:border-brand"
@@ -142,7 +144,7 @@ export default function WizardPage() {
         <div className="grid grid-cols-2 gap-3">
           <button
             onClick={() => setWantsFood(true)}
-            className={`rounded-xl border p-4 font-medium transition ${
+            className={`choice font-medium transition ${
               wantsFood ? "border-brand bg-brand-soft" : "border-line bg-surface"
             }`}
           >
@@ -150,7 +152,7 @@ export default function WizardPage() {
           </button>
           <button
             onClick={() => setWantsFood(false)}
-            className={`rounded-xl border p-4 font-medium transition ${
+            className={`choice font-medium transition ${
               !wantsFood ? "border-brand bg-brand-soft" : "border-line bg-surface"
             }`}
           >
@@ -183,7 +185,7 @@ export default function WizardPage() {
         {step > 0 && (
           <button
             onClick={() => setStep((s) => s - 1)}
-            className="rounded-full border border-line bg-surface px-5 py-2.5 font-medium hover:bg-brand-soft"
+            className="btn rounded-full border border-line bg-surface hover:bg-brand-soft"
           >
             {t("wizard_back")}
           </button>
@@ -191,7 +193,7 @@ export default function WizardPage() {
         <button
           onClick={() => (last ? submit() : setStep((s) => s + 1))}
           disabled={step === 1 && interests.length === 0}
-          className="ml-auto rounded-full bg-brand px-6 py-2.5 font-semibold text-white hover:opacity-90 disabled:opacity-40"
+          className="btn rounded-full ml-auto bg-brand text-white hover:opacity-90 disabled:opacity-40"
         >
           {last ? t("wizard_submit") : t("wizard_next")}
         </button>

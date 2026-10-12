@@ -113,7 +113,7 @@ export default function AuthPage() {
         <button
           type="submit"
           disabled={busy}
-          className="w-full rounded-full bg-brand px-5 py-2.5 font-semibold text-white disabled:opacity-50"
+          className="btn rounded-full w-full bg-brand text-white disabled:opacity-50"
         >
           {busy ? "…" : mode === "signup" ? t("auth_signup") : t("auth_signin")}
         </button>
