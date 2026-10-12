@@ -35,9 +35,24 @@ export default function CheckInClient({ token }: { token: string }) {
       await ensureSession();
       let coords: { lat: number; lng: number } | undefined;
 
-      if (!SKIP_GEOFENCE && "geolocation" in navigator) {
+      if (!SKIP_GEOFENCE) {
+        // Hatayı yutmuyoruz: konum reddedilince eskiden null gidiyordu ve
+        // sunucu mesafeyi hiç kontrol etmiyordu, yani izni reddetmek
+        // geofence'i atlamanın yolu oluyordu. Artık sunucu da reddediyor;
+        // burada da kullanıcıya ne yapması gerektiğini söylüyoruz.
+        if (!("geolocation" in navigator)) {
+          throw new Error(
+            "Bu tarayıcı konum paylaşmıyor. Check-in için konum gerekli.",
+          );
+        }
         setPhase("locating");
-        coords = await getCoords().catch(() => undefined);
+        try {
+          coords = await getCoords();
+        } catch {
+          throw new Error(
+            "Konum alınamadı. Tarayıcıda konum iznini ver ve tekrar dene.",
+          );
+        }
       }
 
       setPhase("sending");
