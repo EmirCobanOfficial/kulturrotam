@@ -1,5 +1,13 @@
 import { ensureSession, supabase } from "@/lib/supabase/client";
-import type { Badge, Coupon, EventItem, Photo, Place, Redemption } from "@/lib/types";
+import type {
+  Badge,
+  Coupon,
+  CouponKind,
+  EventItem,
+  Photo,
+  Place,
+  Redemption,
+} from "@/lib/types";
 
 export async function fetchPlaces(): Promise<Place[]> {
   const { data, error } = await supabase.from("places").select("*").order("sort_order");
@@ -13,13 +21,28 @@ export async function fetchCoupons(): Promise<Coupon[]> {
   return (data ?? []) as Coupon[];
 }
 
-export async function fetchProfile() {
+export type ProfileRow = {
+  id: string;
+  nickname: string | null;
+  /** Sarı, yıldızlı puan. */
+  points: number;
+  /** Yeşil, kalpli iyilik puanı. */
+  green_points: number;
+};
+
+export async function fetchProfile(): Promise<ProfileRow | null> {
   const { data, error } = await supabase
     .from("profiles")
-    .select("id, nickname, points")
+    .select("id, nickname, points, green_points")
     .maybeSingle();
-  if (error) throw error;
-  return data;
+  if (!error) return data as ProfileRow | null;
+
+  // 42703 = kolon yok: supabase/wallet.sql canlıda henüz çalıştırılmamış.
+  // Header, profil ve ödül sayfası tamamen düşmesin diye eski kolonlarla oku.
+  if (error.code !== "42703") throw error;
+  const legacy = await supabase.from("profiles").select("id, nickname, points").maybeSingle();
+  if (legacy.error) throw legacy.error;
+  return legacy.data ? { ...legacy.data, green_points: 0 } : null;
 }
 
 export async function fetchMyBadges(): Promise<Badge[]> {
@@ -52,8 +75,11 @@ export async function fetchMyRedemptions(): Promise<(Redemption & { coupon: Coup
 export type CheckInResult = {
   place: { slug: string; name: string };
   already: boolean;
+  /** Sarıya ve yeşile aynı miktarda yazılır. */
   earned: number;
   total_points: number;
+  /** wallet.sql çalışmadan önceki fonksiyon bu alanı dönmez. */
+  total_green?: number;
   new_badges: { slug: string; name: string; icon: string }[];
   geofence_checked: boolean;
 };
@@ -72,16 +98,24 @@ export async function checkIn(
   return data as CheckInResult;
 }
 
-export async function redeemCoupon(couponId: string) {
+export type RedeemResult = {
+  /** wallet.sql çalışmadan önceki fonksiyon kind/slug dönmez; o zaman sarı kart say. */
+  kind?: CouponKind;
+  slug?: string | null;
+  /** Yalnızca sarı kartta dolu; dönüştürme ve bağışta null. */
+  code: string | null;
+  title: string;
+  partner: string;
+  cost?: number;
+  remaining_points: number;
+  remaining_green?: number;
+};
+
+export async function redeemCoupon(couponId: string): Promise<RedeemResult> {
   const { data, error } = await supabase.rpc("redeem_coupon", { p_coupon: couponId });
   if (error) throw error;
   pointsChanged();
-  return data as {
-    code: string;
-    title: string;
-    partner: string;
-    remaining_points: number;
-  };
+  return data as RedeemResult;
 }
 
 export async function setNickname(nickname: string) {

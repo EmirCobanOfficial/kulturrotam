@@ -38,10 +38,18 @@ export type Coupon = {
   stock: number;
   is_recyclable_gift: boolean;
   sort_order: number;
-  /** 'reward' puanla alınan ödül, 'donation' puanı bağışa çeviren kart. */
-  kind: "reward" | "donation";
+  /**
+   * 'reward'   sarı kart: sarı puanla alınır, kupon kodu üretir.
+   * 'convert'  İyiliğe dönüştür: sarı puanı aynı miktar yeşil puana çevirir.
+   * 'donation' yeşil kart: yeşil puanla alınır, teşekkür mesajı çıkar.
+   */
+  kind: CouponKind;
   image_url: string | null;
+  /** Karta özel teşekkür metnini i18n sözlüğünden seçmek için. */
+  slug: string | null;
 };
+
+export type CouponKind = "reward" | "convert" | "donation";
 
 export type Redemption = {
   id: string;

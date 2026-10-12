@@ -70,21 +70,22 @@ values
   ('Bursa Kent Müzesi', 'Müze giriş', 'Tek kişi ücretsiz', 200, 25, false, 3),
   ('KültürRotam', 'Geri dönüşümlü sürpriz hediye kutusu', 'Kutu içinden rastgele yerel ürün', 300, 15, true, 4);
 
--- Sarı kartlar: puanla alınan ödüller.
+-- Sarı kartlar: sarı (yıldızlı) puanla alınır, kupon kodu üretir.
 insert into public.coupons
-  (partner_name, title_tr, discount_text, cost_points, stock, kind, image_url, sort_order)
+  (partner_name, title_tr, discount_text, cost_points, stock, kind, image_url, sort_order, slug)
 values
-  ('BursaKart', 'BursaKart 50 TL yükleme kodu', '50 TL yükleme', 2400, 50, 'reward', '/oduller/bursakart-50.jpeg', 10),
-  ('BursaKart', 'BursaKart 100 TL yükleme kodu', '100 TL yükleme', 4000, 50, 'reward', '/oduller/bursakart-100.jpeg', 11),
-  ('BursaKart', 'BursaKart 200 TL yükleme kodu', '200 TL yükleme', 6000, 50, 'reward', '/oduller/bursakart-200.jpeg', 12),
-  ('Sinema', 'Sinema bileti hediyesi', '1 bilet', 2000, 50, 'reward', '/oduller/sinema.jpeg', 13),
-  ('Konser', 'Konser bileti hediyesi', '1 bilet', 5000, 50, 'reward', '/oduller/konser.jpeg', 14);
+  ('BursaKart', 'BursaKart 50 TL yükleme kodu', '50 TL yükleme', 2400, 50, 'reward', '/oduller/bursakart-50.jpeg', 10, 'bursakart-50'),
+  ('BursaKart', 'BursaKart 100 TL yükleme kodu', '100 TL yükleme', 4000, 50, 'reward', '/oduller/bursakart-100.jpeg', 11, 'bursakart-100'),
+  ('BursaKart', 'BursaKart 200 TL yükleme kodu', '200 TL yükleme', 6000, 50, 'reward', '/oduller/bursakart-200.jpeg', 12, 'bursakart-200'),
+  ('Sinema', 'Sinema bileti hediyesi', '1 bilet', 2000, 50, 'reward', '/oduller/sinema.jpeg', 13, 'sinema'),
+  ('Konser', 'Konser bileti hediyesi', '1 bilet', 5000, 50, 'reward', '/oduller/konser.jpeg', 14, 'konser');
 
--- Yeşil kartlar: puanı bağışa çevirenler.
+-- Dönüştürücü: sarı puanı aynı miktar yeşil puana çevirir.
+-- Yeşil kartlar: yeşil (kalpli) puanla alınır, teşekkür mesajı gösterir.
 insert into public.coupons
-  (partner_name, title_tr, discount_text, cost_points, stock, kind, image_url, sort_order)
+  (partner_name, title_tr, discount_text, cost_points, stock, kind, image_url, sort_order, slug)
 values
-  ('KültürRotam', 'İyiliğe dönüştür', 'Puanını bağışa çevir', 100, 50, 'donation', '/oduller/iyilige-donustur.jpeg', 20),
-  ('TEMA Vakfı', 'Umut Ormanı Projesi', 'Bir fidan bağışı', 500, 50, 'donation', '/oduller/tema.jpeg', 21),
-  ('HAYTAP', 'Sahipsiz canlara yaşam desteği', 'Mama ve bakım bağışı', 1000, 50, 'donation', '/oduller/haytap.jpeg', 22),
-  ('Türk Eğitim Vakfı', 'Öğrenci bursu desteği', 'Burs bağışı', 2000, 50, 'donation', '/oduller/tev.jpeg', 23);
+  ('KültürRotam', 'İyiliğe dönüştür', 'Puanını bağışa çevir', 100, 50, 'convert', '/oduller/iyilige-donustur.jpeg', 20, 'iyilige-donustur'),
+  ('TEMA Vakfı', 'Umut Ormanı Projesi', 'Bir fidan bağışı', 500, 50, 'donation', '/oduller/tema.jpeg', 21, 'tema'),
+  ('HAYTAP', 'Sahipsiz canlara yaşam desteği', 'Mama ve bakım bağışı', 1000, 50, 'donation', '/oduller/haytap.jpeg', 22, 'haytap'),
+  ('Türk Eğitim Vakfı', 'Öğrenci bursu desteği', 'Burs bağışı', 2000, 50, 'donation', '/oduller/tev.jpeg', 23, 'tev');

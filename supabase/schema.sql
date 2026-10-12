@@ -15,7 +15,8 @@ drop table if exists public.profiles;
 create table public.profiles (
   id         uuid primary key references auth.users on delete cascade,
   nickname   text,
-  points     integer not null default 0,
+  points     integer not null default 0,        -- sari, yildizli puan
+  green_points integer not null default 0,      -- yesil, kalpli iyilik puani
   created_at timestamptz not null default now()
 );
 
@@ -73,9 +74,13 @@ create table public.coupons (
   stock              integer not null default 50,
   is_recyclable_gift boolean not null default false,
   sort_order         integer not null default 0,
-  -- 'reward' puanla alinan odul (sari), 'donation' puani bagisa ceviren kart (yesil).
-  kind               text not null default 'reward' check (kind in ('reward', 'donation')),
-  image_url          text
+  -- 'reward'   sari kart: sari puanla alinir, kupon kodu uretir.
+  -- 'convert'  Iyilige donustur: sari puani ayni miktar yesil puana cevirir.
+  -- 'donation' yesil kart: yesil puanla alinir, tesekkur mesaji gosterir.
+  kind               text not null default 'reward' check (kind in ('reward', 'convert', 'donation')),
+  image_url          text,
+  -- arayuzun karta ozel tesekkur metnini secmesi icin (src/lib/i18n.ts)
+  slug               text unique
 );
 
 create table public.redemptions (
@@ -147,6 +152,7 @@ declare
   v_badge    record;
   v_count    integer;
   v_points   integer;
+  v_green    integer;
 begin
   if v_user is null then raise exception 'oturum yok'; end if;
 
@@ -167,8 +173,12 @@ begin
   v_new := found;
 
   if v_new then
-    update public.profiles set points = points + v_place.points_reward
-    where id = v_user returning points into v_points;
+    -- Kazanilan puan sari ve yesil bakiyeye ayni miktarda yazilir.
+    update public.profiles
+       set points       = points       + v_place.points_reward,
+           green_points = green_points + v_place.points_reward
+     where id = v_user
+    returning points, green_points into v_points, v_green;
 
     -- rozet değerlendirme: kategori sayacı
     for v_badge in
@@ -190,7 +200,8 @@ begin
       end if;
     end loop;
   else
-    select points into v_points from public.profiles where id = v_user;
+    select points, green_points into v_points, v_green
+    from public.profiles where id = v_user;
   end if;
 
   return jsonb_build_object(
@@ -198,43 +209,75 @@ begin
     'already',      not v_new,
     'earned',       case when v_new then v_place.points_reward else 0 end,
     'total_points', coalesce(v_points, 0),
+    'total_green',  coalesce(v_green, 0),
     'new_badges',   v_badges,
     'geofence_checked', p_lat is not null and p_lng is not null
   );
 end $$;
 
--- Kupon harcama: puan düşme, stok düşme ve kod üretimi tek kilitli işlemde.
+-- Kart harcama: hangi bakiyeden düşeceği kart türüne göre seçilir.
+-- Bakiye ve kart satırı kilitlenir, bütün yazma tek işlemde olur.
+--   reward   → sarı düşer, stok azalır, kupon kodu üretilir
+--   convert  → sarı düşer, aynı miktar yeşile eklenir (stok yok)
+--   donation → yeşil düşer, kod gösterilmez (arayüz teşekkür mesajı çıkarır)
 create or replace function public.redeem_coupon(p_coupon uuid)
 returns jsonb
 language plpgsql security definer set search_path = public as $$
 declare
-  v_user   uuid := auth.uid();
-  v_points integer;
-  v_coupon public.coupons;
-  v_code   text;
+  v_user    uuid := auth.uid();
+  v_profile public.profiles;
+  v_coupon  public.coupons;
+  v_code    text := null;
 begin
   if v_user is null then raise exception 'oturum yok'; end if;
 
-  select points into v_points from public.profiles where id = v_user for update;
-  if v_points is null then raise exception 'once check-in yap'; end if;
+  select * into v_profile from public.profiles where id = v_user for update;
+  if v_profile.id is null then raise exception 'once check-in yap'; end if;
 
   select * into v_coupon from public.coupons where id = p_coupon for update;
   if v_coupon.id is null then raise exception 'kupon yok'; end if;
-  if v_coupon.stock <= 0 then raise exception 'kupon tukendi'; end if;
-  if v_points < v_coupon.cost_points then
-    raise exception 'puan yetersiz: % gerekli, % var', v_coupon.cost_points, v_points;
+
+  if v_coupon.kind = 'donation' then
+    if v_profile.green_points < v_coupon.cost_points then
+      raise exception 'iyilik puani yetersiz: % gerekli, % var',
+        v_coupon.cost_points, v_profile.green_points;
+    end if;
+    update public.profiles set green_points = green_points - v_coupon.cost_points
+     where id = v_user returning * into v_profile;
+    -- Satır yalnızca "yaptığım iyilikler" listesi için; code kolonu zorunlu ve tekil.
+    insert into public.redemptions (user_id, coupon_id, code)
+    values (v_user, v_coupon.id,
+            'IY-' || upper(substr(md5(random()::text || clock_timestamp()::text), 1, 6)));
+
+  elsif v_coupon.kind = 'convert' then
+    if v_profile.points < v_coupon.cost_points then
+      raise exception 'puan yetersiz: % gerekli, % var', v_coupon.cost_points, v_profile.points;
+    end if;
+    update public.profiles
+       set points       = points       - v_coupon.cost_points,
+           green_points = green_points + v_coupon.cost_points
+     where id = v_user returning * into v_profile;
+
+  else
+    if v_coupon.stock <= 0 then raise exception 'kupon tukendi'; end if;
+    if v_profile.points < v_coupon.cost_points then
+      raise exception 'puan yetersiz: % gerekli, % var', v_coupon.cost_points, v_profile.points;
+    end if;
+    v_code := 'KR-' || upper(substr(md5(random()::text || clock_timestamp()::text), 1, 6));
+    update public.profiles set points = points - v_coupon.cost_points
+     where id = v_user returning * into v_profile;
+    update public.coupons set stock = stock - 1 where id = v_coupon.id;
+    insert into public.redemptions (user_id, coupon_id, code) values (v_user, v_coupon.id, v_code);
   end if;
 
-  v_code := 'KR-' || upper(substr(md5(random()::text || clock_timestamp()::text), 1, 6));
-
-  update public.profiles set points = points - v_coupon.cost_points where id = v_user;
-  update public.coupons  set stock  = stock  - 1 where id = v_coupon.id;
-  insert into public.redemptions (user_id, coupon_id, code) values (v_user, v_coupon.id, v_code);
-
-  return jsonb_build_object('code', v_code,
-                            'title', v_coupon.title_tr,
-                            'partner', v_coupon.partner_name,
-                            'remaining_points', v_points - v_coupon.cost_points);
+  return jsonb_build_object('kind',             v_coupon.kind,
+                            'slug',             v_coupon.slug,
+                            'code',             v_code,
+                            'title',            v_coupon.title_tr,
+                            'partner',          v_coupon.partner_name,
+                            'cost',             v_coupon.cost_points,
+                            'remaining_points', v_profile.points,
+                            'remaining_green',  v_profile.green_points);
 end $$;
 
 grant execute on function public.set_nickname(text)  to anon, authenticated;
