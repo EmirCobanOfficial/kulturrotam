@@ -46,9 +46,15 @@ export default function Home() {
       .catch(() => setEvents([]));
   }, [selectedDay]);
 
-  const wizardHref =
-    `/sihirbaz?interests=${interest}&hours=${hours}&food=${wantsFood ? 1 : 0}` +
-    `&date=${toISODate(selectedDay)}`;
+  /**
+   * Hızlı başlangıç çubuğu doğrudan rotaya gider, sihirbaza değil: dört soruyu
+   * burada sorduk, sihirbaz aynı şeyleri tekrar sormamalı. Sormadığımız iki
+   * alan varsayılanla gider — başlangıç 10:00, bütçe orta. Hepsini tek tek
+   * ayarlamak isteyen "Rotanı Oluştur" ile sihirbaza gidiyor.
+   */
+  const routeHref =
+    `/rota?start=10&budget=2&interests=${interest}&hours=${hours}` +
+    `&food=${wantsFood ? 1 : 0}&date=${toISODate(selectedDay)}`;
 
   const cards = [
     { label: t("home_card_culture"), href: "/sihirbaz", from: "from-brand" },
@@ -148,7 +154,7 @@ export default function Home() {
           </label>
 
           <Link
-            href={wizardHref}
+            href={routeHref}
             className="flex items-center justify-center rounded-lg bg-accent px-6 py-2 font-semibold text-white hover:opacity-90 sm:mt-5"
           >
             {t("home_quick_cta")} →
