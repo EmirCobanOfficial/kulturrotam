@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import Reveal from "@/components/Reveal";
 import TicketContribution from "@/components/TicketContribution";
@@ -29,6 +30,17 @@ export default function FirstMeetingPage() {
           <p className="mt-6 text-muted">{t("bib_intro1")}</p>
           <p className="mt-4 text-muted">{t("bib_intro2")}</p>
         </Reveal>
+
+        <Reveal delay={120}>
+          <Image
+            src="/gorsel/sosyal-1.jpg"
+            alt={t("bib_title")}
+            width={1600}
+            height={1067}
+            priority
+            className="mt-10 w-full rounded-2xl object-cover"
+          />
+        </Reveal>
       </section>
 
       {sections.map((s, i) => (
@@ -43,6 +55,16 @@ export default function FirstMeetingPage() {
           </section>
         </Reveal>
       ))}
+
+      <Reveal>
+        <Image
+          src="/gorsel/sosyal-2.jpg"
+          alt={t("bib_h1")}
+          width={1600}
+          height={1067}
+          className="mb-8 w-full rounded-2xl object-cover"
+        />
+      </Reveal>
 
       <Reveal>
         <section className="my-6 rounded-2xl bg-brand px-6 py-10 text-white sm:px-10">

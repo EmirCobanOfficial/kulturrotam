@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import Reveal from "@/components/Reveal";
 import { useLang } from "@/lib/i18n";
@@ -26,6 +27,17 @@ export default function AboutPage() {
           </h1>
           <p className="mt-5 max-w-2xl text-lg text-muted">{t("about_lead")}</p>
         </Reveal>
+
+        <Reveal delay={120}>
+          <Image
+            src="/gorsel/hakkimizda-1.jpg"
+            alt={t("about_title")}
+            width={1600}
+            height={900}
+            priority
+            className="mt-10 w-full rounded-2xl object-cover"
+          />
+        </Reveal>
       </section>
 
       <section className="border-t border-line py-12">
@@ -48,6 +60,16 @@ export default function AboutPage() {
           </h2>
           <p className="mt-4 max-w-2xl text-white/80">{t("about_s3_body")}</p>
         </section>
+      </Reveal>
+
+      <Reveal>
+        <Image
+          src="/gorsel/hakkimizda-2.jpg"
+          alt={t("about_first_stop")}
+          width={1600}
+          height={900}
+          className="mt-8 w-full rounded-2xl object-cover"
+        />
       </Reveal>
 
       <section className="border-t border-line py-14">
