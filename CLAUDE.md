@@ -1,5 +1,12 @@
 # KültürRotam — proje kuralları ve durum
 
+> **ARŞİV — Bu repo Osmangazi Hackathon (Ekim 2026) sürümüdür ve dondurulmuştur.**
+> Jüriye sunulan sürüm `v0.1.0` etiketidir; yeni geliştirme özel
+> [`kulturrotam-platform`](https://github.com/EmirCobanOfficial/kulturrotam-platform) reposunda sürüyor.
+> **`supabase/schema.sql` ve `supabase/seed.sql` tüm veriyi, `supabase/mekanlar.sql` ise kupon ve
+> cüzdan kayıtlarını siler. Bunları hiçbir canlı veritabanında çalıştırma.** Bu belgedeki
+> "dosyayı güncelle, sonra Supabase'de çalıştır" talimatları artık geçerli değildir.
+
 Osmangazi Hackathon, Takım 13. Bursa/Osmangazi için kişiselleştirilmiş kültür rotası + "gez-kazan" puan/rozet/indirim web uygulaması. Jüri önünde canlı demo hedefleniyor.
 
 ## Durum (11 Ekim 2026)
@@ -84,7 +91,7 @@ Birden fazla kişi aynı anda çalışıyorsa `KATKI.md`'yi oku: dal açma, şem
 - Arayüz metinleri `src/lib/i18n.ts` sözlüğünde; bileşene düz Türkçe string gömme, `t("...")` kullan.
 - Supabase hataları `Error` değil düz nesnedir; `instanceof Error` yerine `errorText()` (`src/lib/errors.ts`) kullan, yoksa gerçek sebep "bilinmeyen hata"ya dönüşür.
 - Rota motoru (`src/lib/route/plan.ts`) saf fonksiyon, Supabase'den bağımsız ve testli. Rota kuralı değiştirirsen `src/lib/route/plan.test.ts`'i güncelle.
-- Şema/veri değişikliği `supabase/schema.sql` ve `supabase/seed.sql` üzerinden yapılır; dosyayı güncelle, sonra Supabase'de çalıştır.
+- Şema/veri değişikliği `supabase/schema.sql` ve `supabase/seed.sql` üzerinden yapılır; dosyayı güncelle, sonra Supabase'de çalıştır. **(Arşiv: artık uygulanmaz — bu iki dosya canlı veriyi siler.)**
 
 ## Bilinen tuzaklar
 

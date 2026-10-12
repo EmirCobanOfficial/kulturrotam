@@ -17,6 +17,13 @@ import type { Photo, Place } from "@/lib/types";
 const FEED_NOT_READY =
   "Fotoğraf akışı henüz açık değil: supabase/roadmap.sql çalıştırılmalı.";
 
+/**
+ * Yükleme kapalı: moderasyonsuz, herkese açık bucket hackathon sonrası kötüye
+ * kullanıma açıktı. Asıl kilit sunucuda (supabase/akis-yukleme-kapat.sql);
+ * bu bayrak yalnızca artık çalışmayacak formu gizler.
+ */
+const UPLOADS_OPEN = false;
+
 /** Tablolar/bucket yoksa Postgres 42P01 döner; bunu ham hata olarak gösterme. */
 function missingTables(e: unknown): boolean {
   if (typeof e !== "object" || e === null) return false;
@@ -102,6 +109,7 @@ export default function PhotoFeed() {
       <h2 className="text-2xl font-bold">{t("feed_title")}</h2>
       <p className="mt-1 text-muted">{t("feed_lead")}</p>
 
+      {UPLOADS_OPEN ? (
       <form onSubmit={onUpload} className="mt-6 rounded-xl border border-line bg-surface p-4">
         <label className="block text-sm font-semibold" htmlFor="place-select">
           {t("feed_place")}
@@ -152,6 +160,12 @@ export default function PhotoFeed() {
 
         {error && <p className="mt-3 text-sm text-accent">{error}</p>}
       </form>
+      ) : (
+        <div className="mt-6 rounded-xl border border-line bg-surface p-4 text-sm text-muted">
+          {t("feed_closed")}
+          {error && <p className="mt-3 text-accent">{error}</p>}
+        </div>
+      )}
 
       {photos.length === 0 ? (
         <p className="mt-8 text-muted">{t("feed_empty")}</p>

@@ -1,5 +1,12 @@
 # Devir Notu (Handoff)
 
+> **ARŞİV — Bu repo Osmangazi Hackathon (Ekim 2026) sürümüdür ve dondurulmuştur.**
+> Jüriye sunulan sürüm `v0.1.0` etiketidir; yeni geliştirme özel
+> [`kulturrotam-platform`](https://github.com/EmirCobanOfficial/kulturrotam-platform) reposunda sürüyor.
+> **`supabase/schema.sql` ve `supabase/seed.sql` tüm veriyi, `supabase/mekanlar.sql` ise kupon ve
+> cüzdan kayıtlarını siler. Bunları hiçbir canlı veritabanında çalıştırma.** Bu belgedeki
+> "dosyayı güncelle, sonra Supabase'de çalıştır" talimatları artık geçerli değildir.
+
 > Oluşturuldu: 11 Ekim 2026
 > Proje: KültürRotam — Osmangazi Hackathon, Takım 13
 > Bu oturum: Vercel'e deploy edildi ve canlıda doğrulandı; ardından TR/EN dil desteği, topluluk fotoğraf akışı, belediye etkinlik takvimi ve e-posta ile kayıt/giriş yazıldı.

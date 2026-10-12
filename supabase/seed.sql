@@ -1,3 +1,4 @@
+-- UYARI (ARSIV): Bu dosya tum mekan, kupon, ziyaret ve rozet verisini DELETE ile siler. Hicbir canli veritabaninda CALISTIRMA.
 -- KültürRotam — demo verisi. schema.sql'den sonra çalıştırılır.
 -- Koordinatlar OpenStreetMap/Nominatim'den alındı; Tophane ve Kapalıçarşı
 -- OSM'de nokta olarak kayıtlı olmadığı için yakın (±150 m) elle girildi.

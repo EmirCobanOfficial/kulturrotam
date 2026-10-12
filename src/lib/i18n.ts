@@ -49,6 +49,9 @@ const DICT = {
     feed_vote: "Beğen",
     feed_voted: "Beğendin",
     feed_need_file: "Önce bir fotoğraf seç.",
+    feed_closed: "Hackathon sona erdi; fotoğraf yükleme kapatıldı. Paylaşılan kareler görünmeye devam ediyor.",
+    demo_banner:
+      "Bu site Osmangazi Hackathon (Ekim 2026) için hazırlanmış bir demodur. Gösterilen iş birlikleri, sponsorlar ve bağışlar temsilidir; gerçek bağış veya ödeme yapılmaz.",
 
     nav_signin: "Giriş",
     nav_signout: "Çıkış",
@@ -281,6 +284,9 @@ const DICT = {
     feed_vote: "Like",
     feed_voted: "Liked",
     feed_need_file: "Pick a photo first.",
+    feed_closed: "The hackathon is over and photo uploads are closed. Shared photos stay visible.",
+    demo_banner:
+      "This site is a demo built for the Osmangazi Hackathon (October 2026). The partners, sponsors and donations shown are illustrative; no real donation or payment is made.",
 
     nav_signin: "Sign in",
     nav_signout: "Sign out",

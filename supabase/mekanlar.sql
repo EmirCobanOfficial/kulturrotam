@@ -1,3 +1,4 @@
+-- UYARI (ARSIV): Bu dosya eski kuponlari siler; cascade ile o kuponlardan alinmis cuzdan kayitlari da silinir. Tekrar CALISTIRMA.
 -- Rotaya yeni duraklar ve odul kartlarinin sadelestirilmesi.
 -- schema.sql'e EK olarak calisir; tekrar calistirilabilir.
 -- Dosya tamamen ASCII: SQL editorune panodan yapistirmak guvenli.

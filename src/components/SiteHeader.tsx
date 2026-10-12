@@ -40,6 +40,8 @@ export default function SiteHeader() {
 
   return (
     <header className="border-b border-line bg-surface">
+      {/* Gerçek anlaşma ve arka uç olmadan kurum adları gösterildiği için her sayfada görünür. */}
+      <p className="bg-accent-soft px-4 py-2 text-center text-xs text-accent">{t("demo_banner")}</p>
       <div className="mx-auto flex max-w-6xl items-center gap-3 px-4 py-3">
         <Link href="/" className="text-lg font-bold text-brand" onClick={() => setOpen(false)}>
           Kültür<span className="text-accent">Rotam</span>

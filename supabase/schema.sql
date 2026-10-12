@@ -1,3 +1,4 @@
+-- UYARI (ARSIV): Bu dosya DROP TABLE ve DELETE icerir, TUM VERIYI SILER. Hicbir canli veritabaninda CALISTIRMA.
 -- KültürRotam — şema. Supabase SQL editöründe baştan sona çalıştırılır.
 -- Tekrar çalıştırılabilir olsun diye her şey drop ile başlar (hackathon; veri değerli değil).
 
