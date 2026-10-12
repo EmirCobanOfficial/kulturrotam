@@ -66,10 +66,17 @@ export default function Home() {
     `/sihirbaz?interests=${interest}&food=${wantsFood ? 1 : 0}` +
     `&date=${toISODate(selectedDay)}`;
 
+  // image verilen kart fotoğrafla, verilmeyen renk geçişiyle çizilir;
+  // diğer iki fotoğraf gelince aynı alana düşer.
   const cards = [
-    { label: t("home_card_culture"), href: "/sihirbaz", from: "from-brand" },
-    { label: t("home_card_food"), href: "/sihirbaz", from: "from-accent" },
-    { label: t("home_card_events"), href: "/akis", from: "from-brand" },
+    {
+      label: t("home_card_culture"),
+      href: "/sihirbaz",
+      from: "from-brand",
+      image: "/gorsel/kart-kultur.jpg",
+    },
+    { label: t("home_card_food"), href: "/sihirbaz", from: "from-accent", image: null },
+    { label: t("home_card_events"), href: "/akis", from: "from-brand", image: null },
   ];
 
   const partners = [
@@ -97,8 +104,8 @@ export default function Home() {
           geniş ekranda soldan sağa açılan bir geçiş: yazı kremin üstünde
           kalırken fotoğraf sağda görünür.
         */}
-        <div className="absolute inset-0 bg-background/65 sm:bg-gradient-to-r sm:from-background sm:from-5% sm:via-background/55 sm:via-45% sm:to-transparent sm:to-80%" />
-        <div className="relative px-6 py-14 sm:px-10 sm:py-20">
+        <div className="absolute inset-0 bg-background/55 sm:bg-gradient-to-r sm:from-background sm:from-0% sm:via-background/68 sm:via-30% sm:to-transparent sm:to-62%" />
+        <div className="relative px-6 py-14 sm:px-10 sm:py-28">
           <Reveal>
             <span className="mb-4 inline-flex items-center gap-2 rounded-full bg-brand px-4 py-1.5 text-sm font-semibold text-white">
               <span aria-hidden>●</span>
@@ -200,9 +207,24 @@ export default function Home() {
             <Reveal key={c.label} delay={i * 110}>
               <Link
                 href={c.href}
-                className={`flex h-44 items-end rounded-xl bg-gradient-to-br ${c.from} to-brand-soft p-5 transition-transform hover:-translate-y-1`}
+                className={`relative flex h-44 items-end overflow-hidden rounded-xl p-5 transition-transform hover:-translate-y-1 ${
+                  c.image ? "bg-foreground" : `bg-gradient-to-br ${c.from} to-brand-soft`
+                }`}
               >
-                <span className="text-lg font-bold text-white drop-shadow">
+                {c.image && (
+                  <>
+                    <Image
+                      src={c.image}
+                      alt=""
+                      fill
+                      sizes="(max-width: 640px) 100vw, 320px"
+                      className="object-cover"
+                    />
+                    {/* Yazı fotoğrafın üstünde; alttan koyuya giden perde onu taşır. */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/15 to-transparent" />
+                  </>
+                )}
+                <span className="relative text-lg font-bold text-white drop-shadow">
                   {c.label} →
                 </span>
               </Link>
