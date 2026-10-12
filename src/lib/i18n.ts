@@ -191,9 +191,7 @@ const DICT = {
     bib_cta2: "Programa İş Birliğiyle Katıl",
 
     tc_title: "Bu bilet yeni bir keşfe katkı sağlar.",
-    tc_from_ticket: "Bu biletten",
-    tc_amount_placeholder: "belirlenecek tutar",
-    tc_body1: "TL, Bursa'yla İlk Buluşma programının sosyal katılım bütçesine aktarılacaktır.",
+    tc_body1: "Bu biletten ayrılacak tutar, Bursa'yla İlk Buluşma programının sosyal katılım bütçesine aktarılacaktır.",
     tc_body2: "Katkınız, kültür gezilerine erişimi sınırlı lise öğrencilerinin ulaşım ve kültürel keşif giderlerini desteklemek için kullanılacaktır.",
     tc_link: "Katkı modelimizi incele",
 
@@ -421,9 +419,7 @@ const DICT = {
     bib_cta2: "Partner with the programme",
 
     tc_title: "This ticket helps start a new journey of discovery.",
-    tc_from_ticket: "From this ticket,",
-    tc_amount_placeholder: "amount to be set",
-    tc_body1: "TL will go to the participation budget of the First Meeting with Bursa programme.",
+    tc_body1: "The amount set aside from this ticket will go to the participation budget of the First Meeting with Bursa programme.",
     tc_body2: "Your contribution will help cover travel and discovery costs for high school students with little access to cultural trips.",
     tc_link: "Read how the contribution works",
 
