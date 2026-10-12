@@ -97,19 +97,19 @@ export default function Home() {
           geniş ekranda soldan sağa açılan bir geçiş: yazı kremin üstünde
           kalırken fotoğraf sağda görünür.
         */}
-        <div className="absolute inset-0 bg-background/90 sm:bg-gradient-to-r sm:from-background sm:via-background/92 sm:to-background/10" />
+        <div className="absolute inset-0 bg-background/65 sm:bg-gradient-to-r sm:from-background sm:from-5% sm:via-background/55 sm:via-45% sm:to-transparent sm:to-80%" />
         <div className="relative px-6 py-14 sm:px-10 sm:py-20">
           <Reveal>
             <span className="mb-4 inline-flex items-center gap-2 rounded-full bg-brand px-4 py-1.5 text-sm font-semibold text-white">
               <span aria-hidden>●</span>
               {t("home_hero_badge")}
             </span>
-            <h1 className="max-w-3xl text-4xl font-bold leading-tight sm:text-6xl">
+            <h1 className="max-w-3xl text-4xl font-bold leading-tight [text-shadow:0_1px_10px_rgba(251,247,241,0.95)] sm:text-6xl">
               {t("home_hero_title_1")}
               <br />
               <span className="text-brand">{t("home_hero_title_2")}</span>
             </h1>
-            <p className="mt-5 max-w-2xl text-lg text-muted">
+            <p className="mt-5 max-w-2xl text-lg font-medium text-muted [text-shadow:0_1px_8px_rgba(251,247,241,0.95)]">
               {t("home_hero_lead")}
             </p>
             <div className="mt-8 flex flex-wrap items-center gap-4">
