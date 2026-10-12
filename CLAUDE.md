@@ -7,6 +7,9 @@ Osmangazi Hackathon, Takım 13. Bursa/Osmangazi için kişiselleştirilmiş kül
 Çalışıyor ve gerçek veritabanına karşı uçtan uca doğrulandı:
 
 - Rota sihirbazı (`/sihirbaz`) → 10 duraklı rota, Leaflet haritası, yürüme süreleri, öğle/akşam penceresine otomatik yemek molası
+- Manuel rota (`/kendi-rotam`) → mekanları kendi sıranla ekle, ↑↓ ile sırala. Eklenen mekan en az yürüten konuma girer; sıra bozulursa "Sıralamayı kısalt" önerisi çıkar (`optimizeOrder`, en yakın komşu + 2-opt, ilk durak sabit)
+- Ana sayfa → hero, 3 alanlı hızlı başlangıç (sihirbaza taşınır), bugünün etkinlikleri, problem kartları (soru işareti çözümü açar), sponsorlar; scroll ile beliren `Reveal` animasyonları
+- Hakkımızda (`/hakkimizda`)
 - QR check-in (`/checkin/[token]`) → puan + rozet; aynı mekandan ikinci puan yok
 - Ödül cüzdanı (`/oduller`) → puan düşer, kupon kodu üretilir; puan yetmezse reddedilir
 - Profil (`/profil`), QR yazdırma sayfası (`/admin/qr`)
@@ -27,12 +30,16 @@ Dosya idempotent, tekrar çalıştırılabilir. Tek uyarı: 125. satır `delete 
 
 **11 Ekim'de canlıda doğrulandı:** `/akis` fotoğraf yükleme ve oylama (tek oy kuralı dahil), QR check-in'in ikinci taramada puan vermemesi, kayıt → e-posta doğrulama → giriş akışı.
 
-**Canlıda hâlâ denenmedi:** `/oduller` kupon alma, rotadaki etkinlik rozeti.
+**12 Ekim'de canlıda doğrulandı:** `/oduller` kupon alma (sarı ve yeşil sekme).
+
+**Canlıda hâlâ denenmedi:** rotadaki etkinlik rozeti.
+
+**Sahiplik (12 Ekim, üç kişi paralel çalışıyor):** puan ve ödül tarafı ekipten bir arkadaşa devredildi — `profiles.points`, `coupons`, `redeem_coupon` ve `/oduller` ona ait. O alana dokunmadan önce onunla konuş, yoksa aynı anda iki kişi aynı mantığı yazar.
 
 **Kalan iş (hepsi operasyon, kod değil — ayrıntısı `HANDOFF.md`'de):**
 
 1. **QR kodlarını yazdır.** `/admin/qr` sayfasını **canlı domainden** aç ve yazdır — QR değerleri `window.location.origin` ile üretilir; yerelden yazdırılan kodlar `localhost`, Vercel preview dalından yazdırılanlar ise dal silinince ölen bir adres gösterir.
-2. **Canlıda bir kez dene:** `/oduller` kupon alma (sarı ve yeşil sekme) ve rotada etkinlik rozeti. İkisi de hiç test edilmedi.
+2. **Canlıda bir kez dene:** rotada etkinlik rozeti (`/sihirbaz` → rota; Ulu Cami, Koza Han ve Kent Müzesi duraklarında bugüne ait rozet çıkmalı). Hiç test edilmedi.
 
 Birden fazla kişi aynı anda çalışıyorsa `KATKI.md`'yi oku: dal açma, şema değişikliği ve puan mantığına dokunma kuralları orada.
 
