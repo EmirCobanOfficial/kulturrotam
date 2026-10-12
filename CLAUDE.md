@@ -23,6 +23,8 @@ Supabase projesi `ooyjctgdfkexjybiqjti` kurulu: şema + seed yüklü, anonymous 
 
 Dosya idempotent, tekrar çalıştırılabilir. Tek uyarı: 125. satır `delete from public.events where source = 'belediye'` yapar — kendi seed'ini silip yeniden ekler. Puan, rozet, mekan ve kullanıcı verisine dokunmaz. Etkinlik tarihleri `current_date` üzerinden üretildiği için demo hangi gün olursa olsun o güne düşer; tekrar çalıştırmaya gerek yok.
 
+**`supabase/rewards.sql` çalıştırıldı** (12 Ekim). `coupons` tablosuna `kind` (`reward` = sarı, puanla alınan ödül / `donation` = yeşil, puanı bağışa çeviren kart) ve `image_url` kolonları eklendi; dokuz kart yüklendi. Kart görselleri `public/oduller/` altında. **Tek puan bakiyesi var** (`profiles.points`); iki kategori aynı bakiyeden harcar, `redeem_coupon` değişmedi.
+
 **11 Ekim'de canlıda doğrulandı:** `/akis` fotoğraf yükleme ve oylama (tek oy kuralı dahil), QR check-in'in ikinci taramada puan vermemesi, kayıt → e-posta doğrulama → giriş akışı.
 
 **Canlıda hâlâ denenmedi:** `/oduller` kupon alma, rotadaki etkinlik rozeti.
@@ -30,7 +32,9 @@ Dosya idempotent, tekrar çalıştırılabilir. Tek uyarı: 125. satır `delete 
 **Kalan iş (hepsi operasyon, kod değil — ayrıntısı `HANDOFF.md`'de):**
 
 1. **QR kodlarını yazdır.** `/admin/qr` sayfasını **canlı domainden** aç ve yazdır — QR değerleri `window.location.origin` ile üretilir; yerelden yazdırılan kodlar `localhost`, Vercel preview dalından yazdırılanlar ise dal silinince ölen bir adres gösterir.
-2. **Canlıda bir kez dene:** `/oduller` kupon alma ve rotada etkinlik rozeti. İkisi de hiç test edilmedi.
+2. **Canlıda bir kez dene:** `/oduller` kupon alma (sarı ve yeşil sekme) ve rotada etkinlik rozeti. İkisi de hiç test edilmedi.
+
+Birden fazla kişi aynı anda çalışıyorsa `KATKI.md`'yi oku: dal açma, şema değişikliği ve puan mantığına dokunma kuralları orada.
 
 ## Mimari kuralları
 
