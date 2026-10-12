@@ -72,7 +72,10 @@ create table public.coupons (
   cost_points        integer not null,
   stock              integer not null default 50,
   is_recyclable_gift boolean not null default false,
-  sort_order         integer not null default 0
+  sort_order         integer not null default 0,
+  -- 'reward' puanla alinan odul (sari), 'donation' puani bagisa ceviren kart (yesil).
+  kind               text not null default 'reward' check (kind in ('reward', 'donation')),
+  image_url          text
 );
 
 create table public.redemptions (

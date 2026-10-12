@@ -69,3 +69,22 @@ values
   ('Anlaşmalı Yerel Esnaf', 'Kestane şekeri 250 g', '%20 indirim', 150, 40, false, 2),
   ('Bursa Kent Müzesi', 'Müze giriş', 'Tek kişi ücretsiz', 200, 25, false, 3),
   ('KültürRotam', 'Geri dönüşümlü sürpriz hediye kutusu', 'Kutu içinden rastgele yerel ürün', 300, 15, true, 4);
+
+-- Sarı kartlar: puanla alınan ödüller.
+insert into public.coupons
+  (partner_name, title_tr, discount_text, cost_points, stock, kind, image_url, sort_order)
+values
+  ('BursaKart', 'BursaKart 50 TL yükleme kodu', '50 TL yükleme', 2400, 50, 'reward', '/oduller/bursakart-50.jpeg', 10),
+  ('BursaKart', 'BursaKart 100 TL yükleme kodu', '100 TL yükleme', 4000, 50, 'reward', '/oduller/bursakart-100.jpeg', 11),
+  ('BursaKart', 'BursaKart 200 TL yükleme kodu', '200 TL yükleme', 6000, 50, 'reward', '/oduller/bursakart-200.jpeg', 12),
+  ('Sinema', 'Sinema bileti hediyesi', '1 bilet', 2000, 50, 'reward', '/oduller/sinema.jpeg', 13),
+  ('Konser', 'Konser bileti hediyesi', '1 bilet', 5000, 50, 'reward', '/oduller/konser.jpeg', 14);
+
+-- Yeşil kartlar: puanı bağışa çevirenler.
+insert into public.coupons
+  (partner_name, title_tr, discount_text, cost_points, stock, kind, image_url, sort_order)
+values
+  ('KültürRotam', 'İyiliğe dönüştür', 'Puanını bağışa çevir', 100, 50, 'donation', '/oduller/iyilige-donustur.jpeg', 20),
+  ('TEMA Vakfı', 'Umut Ormanı Projesi', 'Bir fidan bağışı', 500, 50, 'donation', '/oduller/tema.jpeg', 21),
+  ('HAYTAP', 'Sahipsiz canlara yaşam desteği', 'Mama ve bakım bağışı', 1000, 50, 'donation', '/oduller/haytap.jpeg', 22),
+  ('Türk Eğitim Vakfı', 'Öğrenci bursu desteği', 'Burs bağışı', 2000, 50, 'donation', '/oduller/tev.jpeg', 23);

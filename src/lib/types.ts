@@ -38,6 +38,9 @@ export type Coupon = {
   stock: number;
   is_recyclable_gift: boolean;
   sort_order: number;
+  /** 'reward' puanla alınan ödül, 'donation' puanı bağışa çeviren kart. */
+  kind: "reward" | "donation";
+  image_url: string | null;
 };
 
 export type Redemption = {
