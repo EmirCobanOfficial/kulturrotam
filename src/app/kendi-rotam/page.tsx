@@ -6,7 +6,13 @@ import Reveal from "@/components/Reveal";
 import { fetchPlaces, fetchTodayEvents } from "@/lib/data";
 import { errorText } from "@/lib/errors";
 import { CATEGORY_LABEL, eventTitle, placeName, useLang } from "@/lib/i18n";
-import { formatClock, planManualRoute } from "@/lib/route/plan";
+import {
+  bestInsertIndex,
+  formatClock,
+  optimizeOrder,
+  planManualRoute,
+  totalWalkMinutes,
+} from "@/lib/route/plan";
 import { supabaseConfigured } from "@/lib/supabase/client";
 import type { EventItem, Place } from "@/lib/types";
 
@@ -60,6 +66,14 @@ export default function CustomRoutePage() {
 
   const available = (places ?? []).filter((p) => !chosen.includes(p.id));
 
+  // Şu anki sıranın yürüme yükü ve en kısa sırayla arasındaki fark.
+  const walkNow = useMemo(() => totalWalkMinutes(chosenPlaces), [chosenPlaces]);
+  const walkBest = useMemo(
+    () => totalWalkMinutes(optimizeOrder(chosenPlaces)),
+    [chosenPlaces],
+  );
+  const saving = walkNow - walkBest;
+
   function move(index: number, delta: number) {
     setChosen((prev) => {
       const next = [...prev];
@@ -103,7 +117,19 @@ export default function CustomRoutePage() {
             <p className="text-sm font-semibold">
               {stops.length} {t("km_summary_stops")}
               {last && ` · ${t("km_summary_ends")} ${formatClock(last.departure)}`}
+              {` · ${Math.round(walkNow)} dk ${t("km_total_walk")}`}
             </p>
+            {chosenPlaces.length > 2 &&
+              (saving >= 1 ? (
+                <button
+                  onClick={() => setChosen(optimizeOrder(chosenPlaces).map((p) => p.id))}
+                  className="rounded-full bg-accent px-4 py-1.5 text-sm font-semibold text-white hover:opacity-90"
+                >
+                  {t("km_optimize")} · {Math.round(saving)} {t("km_saves")}
+                </button>
+              ) : (
+                <span className="text-sm font-semibold text-brand">✓ {t("km_optimal")}</span>
+              ))}
             <button
               onClick={() => setChosen([])}
               className="rounded-full border border-line px-4 py-1.5 text-sm font-semibold hover:bg-brand-soft"
@@ -118,6 +144,7 @@ export default function CustomRoutePage() {
         {/* ------------------------------------------------- eklenebilecekler */}
         <section>
           <h2 className="font-semibold">{t("km_pick")}</h2>
+          <p className="mt-1 text-xs text-muted">{t("km_auto_placed")}</p>
           {available.length === 0 ? (
             <p className="mt-3 text-sm text-muted">{t("km_all_added")}</p>
           ) : (
@@ -135,7 +162,17 @@ export default function CustomRoutePage() {
                     </p>
                   </div>
                   <button
-                    onClick={() => setChosen((c) => [...c, p.id])}
+                    onClick={() =>
+                      setChosen((c) => {
+                        // Sona eklemek, yol üstündeki bir yeri en sona atıp
+                        // geri dönmeye zorluyordu; en az yürüten yere koy.
+                        const current = c
+                          .map((id) => byId.get(id))
+                          .filter((x): x is Place => Boolean(x));
+                        const at = bestInsertIndex(current, p);
+                        return [...c.slice(0, at), p.id, ...c.slice(at)];
+                      })
+                    }
                     className="ml-auto shrink-0 rounded-full bg-brand px-4 py-1.5 text-sm font-semibold text-white hover:opacity-90"
                   >
                     {t("km_add")}

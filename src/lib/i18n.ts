@@ -159,6 +159,11 @@ const DICT = {
     km_summary_stops: "durak",
     km_summary_ends: "Bitiş",
     km_loading: "Mekanlar yükleniyor…",
+    km_total_walk: "toplam yürüme",
+    km_optimize: "Sıralamayı kısalt",
+    km_saves: "dk kazanırsın",
+    km_optimal: "Sıra zaten en kısa",
+    km_auto_placed: "Yeni eklenen yer, en az yürüyeceğin sıraya yerleştirildi.",
 
   },
   en: {
@@ -311,6 +316,11 @@ const DICT = {
     km_summary_stops: "stops",
     km_summary_ends: "Ends",
     km_loading: "Loading places…",
+    km_total_walk: "total walking",
+    km_optimize: "Shorten the order",
+    km_saves: "min saved",
+    km_optimal: "Already the shortest order",
+    km_auto_placed: "A place you add goes where it costs you the least walking.",
 
   },
 } as const;

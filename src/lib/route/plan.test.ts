@@ -1,5 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { planManualRoute, planRoute } from "./plan";
+import {
+  bestInsertIndex,
+  optimizeOrder,
+  planManualRoute,
+  planRoute,
+  totalWalkMinutes,
+} from "./plan";
 import type { EventItem, Place, RoutePrefs } from "@/lib/types";
 
 function place(over: Partial<Place> & { slug: string }): Place {
@@ -201,5 +207,63 @@ describe("planManualRoute", () => {
 
   it("boş seçimde boş rota döner", () => {
     expect(planManualRoute([], 10)).toEqual([]);
+  });
+});
+
+describe("optimizeOrder", () => {
+  // Düz bir hat üzerinde dört nokta: A — B — C — D, batıdan doğuya.
+  const A = place({ slug: "a", lng: 29.00 });
+  const B = place({ slug: "b", lng: 29.02 });
+  const C = place({ slug: "c", lng: 29.04 });
+  const D = place({ slug: "d", lng: 29.06 });
+
+  it("yanından geçilip sona atılan durağı yol üstüne alır", () => {
+    // Kullanıcı B'yi sona koymuş: A'dan D'ye gidip B'ye geri dönüyor.
+    const kotu = [A, C, D, B];
+    const iyi = optimizeOrder(kotu);
+
+    expect(iyi.map((p) => p.slug)).toEqual(["a", "b", "c", "d"]);
+    expect(totalWalkMinutes(iyi)).toBeLessThan(totalWalkMinutes(kotu));
+  });
+
+  it("ilk durağı değiştirmez: başlangıcı kullanıcı seçer", () => {
+    const [first] = optimizeOrder([D, A, B, C]);
+    expect(first.slug).toBe("d");
+  });
+
+  it("zaten en kısa sırayı bozmaz", () => {
+    const iyi = [A, B, C, D];
+    expect(totalWalkMinutes(optimizeOrder(iyi))).toBeCloseTo(totalWalkMinutes(iyi), 6);
+  });
+
+  it("aynı durakları döndürür, hiçbirini düşürmez veya çoğaltmaz", () => {
+    const sonuc = optimizeOrder([A, C, D, B]);
+    expect([...sonuc.map((p) => p.slug)].sort()).toEqual(["a", "b", "c", "d"]);
+  });
+
+  it("iki veya daha az durakta dokunmadan döner", () => {
+    expect(optimizeOrder([D, A]).map((p) => p.slug)).toEqual(["d", "a"]);
+    expect(optimizeOrder([]).map((p) => p.slug)).toEqual([]);
+  });
+});
+
+describe("bestInsertIndex", () => {
+  const A = place({ slug: "a", lng: 29.00 });
+  const B = place({ slug: "b", lng: 29.02 });
+  const D = place({ slug: "d", lng: 29.06 });
+
+  it("yol üstündeki mekanı sona değil, geçtiğin yere koyar", () => {
+    // A ve D seçili; B tam aralarında. Sona eklemek D'den geri dönmek olurdu.
+    expect(bestInsertIndex([A, D], B)).toBe(1);
+  });
+
+  it("gerçekten uçta olan mekanı sona ekler", () => {
+    expect(bestInsertIndex([A, B], D)).toBe(2);
+  });
+
+  it("ilk durağı koruyarak ekler", () => {
+    // Boş listeye ilk ekleme 0, sonrakiler asla 0 olmaz.
+    expect(bestInsertIndex([], A)).toBe(0);
+    expect(bestInsertIndex([D], A)).toBeGreaterThan(0);
   });
 });

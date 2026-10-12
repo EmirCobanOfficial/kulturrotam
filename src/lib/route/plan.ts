@@ -117,6 +117,86 @@ function pickMeal(
  * Mekanı saate yerleştir. Açılışı beklemek gerekiyorsa bekler;
  * kapanışa veya gezi süresine sığmıyorsa null döner.
  */
+/** Seçilen sıradaki toplam yürüme süresi, dakika. */
+export function totalWalkMinutes(places: Place[]): number {
+  let total = 0;
+  for (let i = 1; i < places.length; i += 1) {
+    total += walkMinutes(places[i - 1], places[i]);
+  }
+  return total;
+}
+
+/**
+ * Seçilen durakları en az yürümeyle gezilecek sıraya dizer.
+ *
+ * **İlk durak sabit kalır:** kullanıcı nereden başlayacağını bilerek seçiyor
+ * (otelinin yanı, indiği durak). Gerisini en yakın komşuyla kurar, sonra 2-opt
+ * ile kesişen bacakları düzeltir — "yanından geçip sonra geri dönme" durumunu
+ * ortadan kaldıran adım bu.
+ *
+ * Durak sayısı tek haneli olduğu için bu kadarı yeterli; daha iyisi için
+ * gereken karmaşıklık burada kendini ödemez.
+ */
+export function optimizeOrder(places: Place[]): Place[] {
+  if (places.length < 3) return [...places];
+
+  const rest = places.slice(1);
+  const order: Place[] = [places[0]];
+
+  while (rest.length > 0) {
+    const last = order[order.length - 1];
+    let best = 0;
+    for (let i = 1; i < rest.length; i += 1) {
+      if (walkMinutes(last, rest[i]) < walkMinutes(last, rest[best])) best = i;
+    }
+    order.push(rest.splice(best, 1)[0]);
+  }
+
+  let improved = true;
+  while (improved) {
+    improved = false;
+    for (let i = 1; i < order.length - 1; i += 1) {
+      for (let k = i + 1; k < order.length; k += 1) {
+        const candidate = [
+          ...order.slice(0, i),
+          ...order.slice(i, k + 1).reverse(),
+          ...order.slice(k + 1),
+        ];
+        // Kayan nokta gürültüsünde sonsuz döngüye girmemek için küçük bir eşik.
+        if (totalWalkMinutes(candidate) < totalWalkMinutes(order) - 0.001) {
+          order.splice(0, order.length, ...candidate);
+          improved = true;
+        }
+      }
+    }
+  }
+
+  return order;
+}
+
+/**
+ * Yeni bir mekanı listeye eklerken en az yürüme ekleyen konumu bulur.
+ *
+ * Sona eklemek, yolun ortasından geçtiğin bir yeri en sona atıyordu; bu
+ * fonksiyon onu geçtiğin yere yerleştirir. İlk sırayı yine korur.
+ */
+export function bestInsertIndex(current: Place[], place: Place): number {
+  if (current.length === 0) return 0;
+
+  let bestIndex = current.length;
+  let bestCost = Infinity;
+
+  for (let i = 1; i <= current.length; i += 1) {
+    const cost = totalWalkMinutes([...current.slice(0, i), place, ...current.slice(i)]);
+    if (cost < bestCost) {
+      bestCost = cost;
+      bestIndex = i;
+    }
+  }
+
+  return bestIndex;
+}
+
 /**
  * Kullanıcının kendi seçtiği sırayla rota kurar.
  *
